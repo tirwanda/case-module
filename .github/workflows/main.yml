@@ -23,10 +23,10 @@ jobs:
                   cd backend
                   npm install
 
-            - name: Use Node.js (Backend)
+            - name: Deploy To Firebase Functions
               uses: actions/setup-node@v3
               with: 
                   node-version: '18'
                   run: |
                     cd backend
-                    npx firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
+                    npm run deploy --token ${{ secrets.FIREBASE_TOKEN }}
