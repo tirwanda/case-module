@@ -9,7 +9,7 @@ const {
 	changePassword,
 	getUserById,
 	getAllUsers,
-} = require('../../controllers/web/user');
+} = require('../../controllers/web/userController');
 const { isAuthenticatedUser } = require('../../middleware/auth');
 const router = express.Router();
 
