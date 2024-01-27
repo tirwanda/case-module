@@ -5,69 +5,20 @@ on:
         branches:
             - master
 
-jobs:
-    deploy:
-        runs-on: ubuntu-latest
+env:
+    CI: false
 
+jobs:
+    build_and_deploy:
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: 18
-            - uses: jsryudev/deploy-firebase-functions@v0.0.2
+
+            - name: Download deps
+              working-directory: backend
+              run: npm install
+
+            - name: Deploy
+              run: npx firebase-tools deploy
               env:
                   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-                  FIREBASE_PROJECT: case-module
-              run: |
-                  cd backend
-                  npm install
-                  firebase deploy --only functions
-              # - name: Checkout Repository
-              #   uses: actions/checkout@v2
-
-              # - name: Setup Node.js
-              #   uses: actions/setup-node@v2
-              #   with:
-              #       node-version: '18'
-
-              # - name: Install Firebase Tools
-              #   run: npm install -g firebase-tools
-
-              # - name: Install Dependencies
-              #   run: npm install --prefix ./backend
-
-              # - name: Login to Firebase
-              #   run: firebase login --token "${{secrets.FIREBASE_TOKEN}}"
-
-              # - name: Deploy Firebase Functions
-              #   run: firebase deploy --only functions --prefix ./backend
-
-# name: Deploy to Firebase
-
-# on:
-#     push:
-#         branches:
-#             - master
-
-# jobs:
-#     build-and-deploy:
-#         runs-on: ubuntu-latest
-
-#         steps:
-#             - uses: actions/checkout@v3
-#             - uses: actions/setup-node@v3
-#               with:
-#                   node-version: 18
-
-#             - name: Install Dependencies
-#               run: npm install --prefix ./backend
-
-#             - uses: FirebaseExtended/action-hosting-deploy@v0
-#               with:
-#                   repoToken: '${{ secrets.GIT_TOKEN }}'
-#                   firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }} # Make sure this line is included
-#                   projectId: case-module
-#                   expires: 7d
-#                   entryPoint: backend
-#                   firebaseToolsVersion: latest
-#                   channelId: live
