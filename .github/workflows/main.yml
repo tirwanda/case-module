@@ -3,7 +3,7 @@ name: Firebase Deploy
 on:
     push:
         branches:
-            - master # Atur sesuai dengan branch Anda
+            - main
 
 jobs:
     deploy:
@@ -12,30 +12,24 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v2
 
-            - name: Navigate to Backend Directory
-              run: cd backend
-
             - name: Set up Node.js
               uses: actions/setup-node@v2
               with:
-                  node-version: '18' # Sesuaikan versi Node.js sesuai dengan yang Anda gunakan
-
-            - name: Install Dependencies
-              run: |
-                  cd backend
-                  npm install
+                  node-version: '18'
 
             - name: Install Firebase Tools
-              run: |
-                  cd backend
-                  npm install -g firebase-tools # Instal Firebase Tools secara global
+              run: npm install -g firebase-tools
+
+            - name: Navigate to Backend Directory
+              run: cd backend
+
+            - name: Install Dependencies
+              run: npm install
 
             - name: Firebase Login
-              run: |
-                  cd backend
-                  npm run firebase login --no-localhost
+              run: npx firebase login --no-localhost
 
             - name: Firebase Deploy
-              run: |
-                  cd backend
-                  npm run deploy
+              run: npx firebase deploy --only functions
+              env:
+                  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
