@@ -11,12 +11,17 @@ jobs:
 
         steps:
             - uses: actions/checkout@v2
-            - uses: jsryudev/deploy-firebase-functions@v0.0.2
+            - uses: actions/setup-node@v3
               with:
-                  working-directory: backend
+                  node-version: 18
+            - uses: jsryudev/deploy-firebase-functions@v0.0.2
               env:
                   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
                   FIREBASE_PROJECT: case-module
+              run: |
+                  cd backend
+                  npm install
+                  firebase deploy --only functions
               # - name: Checkout Repository
               #   uses: actions/checkout@v2
 
@@ -36,6 +41,7 @@ jobs:
 
               # - name: Deploy Firebase Functions
               #   run: firebase deploy --only functions --prefix ./backend
+
 # name: Deploy to Firebase
 
 # on:
