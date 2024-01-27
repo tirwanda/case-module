@@ -26,3 +26,4 @@ jobs:
                   expires: 7d
                   entryPoint: backend
                   firebaseToolsVersion: latest
+                  channelId: live
