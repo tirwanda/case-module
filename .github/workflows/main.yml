@@ -25,6 +25,9 @@ jobs:
                   cd backend
                   npm install
 
+            - name: Install Firebase Tools
+              run: npm install -g firebase-tools # Instal Firebase Tools secara global
+
             - name: Firebase Login
               run: |
                   cd backend
