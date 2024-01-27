@@ -25,7 +25,7 @@ jobs:
               run: npm install --prefix ./backend
 
             - name: Login to Firebase
-              run: firebase login:ci --token "${{ secrets.FIREBASE_TOKEN }}"
+              run: firebase login:ci --token "${{secrets.FIREBASE_TOKEN}}"
 
             - name: Deploy Firebase Functions
               run: firebase deploy --only functions --prefix ./backend
