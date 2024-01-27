@@ -16,7 +16,7 @@ jobs:
                   node-version: 18
 
             - name: Navigate to Backend Directory
-              run: cd backend
+              run: cd case-module/backend
 
             - name: Install Dependencies
               run: npm install
