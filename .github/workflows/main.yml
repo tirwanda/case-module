@@ -21,13 +21,16 @@ jobs:
                   node-version: '18' # Sesuaikan versi Node.js sesuai dengan yang Anda gunakan
 
             - name: Install Dependencies
-              run: npm install
-
-            - name: Build
-              run: npm run build # Jika Anda memiliki proses build
+              run: |
+                  cd backend
+                  npm install
 
             - name: Firebase Login
-              run: npm run firebase login --no-localhost # Atur skrip ini untuk melakukan login ke Firebase (gunakan firebase login --no-localhost)
+              run: |
+                  cd backend
+                  npm run firebase login --no-localhost
 
             - name: Firebase Deploy
-              run: npm run deploy # Sesuaikan dengan skrip deploy Anda, dalam kasus ini, npm run deploy akan menjalankan 'firebase deploy --only functions'
+              run: |
+                  cd backend
+                  npm run deploy
