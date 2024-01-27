@@ -20,5 +20,8 @@ jobs:
             - uses: FirebaseExtended/action-hosting-deploy@v0
               with:
                   repoToken: '${{ secrets.GIT_TOKEN }}'
-                  firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}'
+                  firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }} # Make sure this line is included
                   projectId: case-module
+                  expires: 7d
+                  entryPoint: .
+                  firebaseToolsVersion: latest
