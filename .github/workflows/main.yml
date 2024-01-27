@@ -1,32 +1,33 @@
-name: Deploy to Firebase
+name: Firebase Deploy
 
 on:
     push:
         branches:
-            - master
+            - master # Atur sesuai dengan branch Anda
 
 jobs:
     deploy:
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v2
 
-            - name: Set Up Node.js
-              uses: actions/setup-node@v3
+            - name: Navigate to Backend Directory
+              run: cd case-module/backend
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
               with:
-                  node-version: '18'
+                  node-version: '18' # Sesuaikan versi Node.js sesuai dengan yang Anda gunakan
 
-            - name: Install Dependencies (Backend)
-              run: |
-                  cd backend
-                  npm install
+            - name: Install Dependencies
+              run: npm install
 
-            - name: Deploy To Firebase Functions
-              uses: actions/setup-node@v3
-              with: 
-                  node-version: '18'
-                  run: |
-                    cd backend
-                    npx firebase deploy --only functions --token ${{ secrets.FIREBASE_TOKEN }}
+            - name: Build
+              run: npm run build # Jika Anda memiliki proses build
+
+            - name: Firebase Login
+              run: npm run firebase login --no-localhost # Atur skrip ini untuk melakukan login ke Firebase (gunakan firebase login --no-localhost)
+
+            - name: Firebase Deploy
+              run: npm run deploy # Sesuaikan dengan skrip deploy Anda, dalam kasus ini, npm run deploy akan menjalankan 'firebase deploy --only functions'
