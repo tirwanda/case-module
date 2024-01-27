@@ -14,12 +14,8 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: 18
-
-            - name: Navigate to Backend Directory
-              run: cd backend
-
             - name: Install Dependencies
-              run: npm install
+              run: npm install --prefix ./backend
 
             - uses: FirebaseExtended/action-hosting-deploy@v0
               with:
