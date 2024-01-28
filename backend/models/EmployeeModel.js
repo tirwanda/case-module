@@ -27,6 +27,10 @@ const employeeSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		status: {
+			type: String,
+			default: 'Active',
+		},
 		effectiveDate: { type: Number, default: Date.now },
 		endEffectiveDate: { type: Number, default: Date.now },
 		avatar: {

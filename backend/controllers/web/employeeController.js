@@ -57,6 +57,7 @@ exports.getAllEmployes = catchAsyncErrors(async (req, res, next) => {
 				jabatan: 1,
 				phone: 1,
 				email: 1,
+				status: 1,
 				effectiveDate: 1,
 				endEffectiveDate: 1,
 			}
@@ -102,6 +103,7 @@ exports.updateEmployee = catchAsyncErrors(async (req, res, next) => {
 		employee.jabatan = req.body.jabatan;
 		employee.phone = req.body.phone;
 		employee.email = req.body.email;
+		employee.status = req.body.status;
 		employee.effectiveDate = req.body.effectiveDate;
 		employee.endEffectiveDate = req.body.endEffectiveDate;
 
