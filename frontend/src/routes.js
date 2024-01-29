@@ -2,7 +2,7 @@ import ProfileOverview from "layouts/pages/profile/profile-overview";
 import Settings from "layouts/pages/account/settings";
 import SignInBasic from "layouts/authentication/sign-in/basic";
 
-// Material Dashboard 2 PRO React components
+// Case Module Security components
 import MDAvatar from "components/MDAvatar";
 
 // @mui icons

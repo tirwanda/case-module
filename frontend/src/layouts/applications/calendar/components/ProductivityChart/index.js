@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-pro-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useRef, useState, useMemo, useEffect } from "react";
 
 // react-chartjs-2 components
@@ -24,14 +9,14 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Icon from "@mui/material/Icon";
 
-// Material Dashboard 2 PRO React components
+// Case Module Security components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 // Chart configurations
 import configs from "layouts/applications/calendar/components/ProductivityChart/configs";
 
-// Material Dashboard 2 PRO React base styles
+// Case Module Security base styles
 import typography from "assets/theme/base/typography";
 
 function ProductivityChart() {

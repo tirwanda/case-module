@@ -6,11 +6,11 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 
-// Material Dashboard 2 PRO React components
+// Case Module Security components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-// Material Dashboard 2 PRO React base styles
+// Case Module Security base styles
 import typography from "assets/theme/base/typography";
 
 function Footer({ light }) {

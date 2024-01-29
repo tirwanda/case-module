@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Material Dashboard 2 PRO React - v2.1.0
+* Case Module Security - v2.1.0
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/material-dashboard-pro-react
@@ -21,7 +21,7 @@ import PropTypes from "prop-types";
 // Custom styles for MDButton
 import MDButtonRoot from "components/MDButton/MDButtonRoot";
 
-// Material Dashboard 2 PRO React contexts
+// Case Module Security contexts
 import { useMaterialUIController } from "context";
 
 const MDButton = forwardRef(
