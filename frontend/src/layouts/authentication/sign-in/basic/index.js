@@ -19,6 +19,9 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import MDSnackbar from "components/MDSnackbar";
+import { userSignIn } from "api/authAPI";
+
+import qs from "query-string";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
@@ -26,7 +29,7 @@ function Basic() {
   const [errorSB, setErrorSB] = useState(false);
 
   const initialState = {
-    username: "",
+    email: "",
     password: "",
   };
   const [data, setData] = useState(initialState);
@@ -38,6 +41,40 @@ function Basic() {
       ...data,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleSignIn = async (event) => {
+    event.preventDefault();
+    console.log(data);
+    await userSignIn(qs.stringify(data))
+      .then((response) => {
+        // if (response.status === 200) {
+        //   localStorage.setItem("ACCESS_TOKEN", response.data.access_token);
+        //   localStorage.setItem("REFRESH_TOKEN", response.data.refresh_token);
+        //   localStorage.setItem("USERNAME", response.data.username);
+        // }
+        console.log(response);
+      })
+      // .then(() => {
+      //   getToken();
+      //   getUser();
+      // })
+      .catch((err) => {
+        if (err && err.response) {
+          switch (err.response.status) {
+            case 400:
+              openErrorSB(err.response.data.error_message);
+              break;
+            case 401:
+              openErrorSB("Authentication Failed.Bad Credentials");
+              break;
+            default:
+              openErrorSB("Something Wrong!Please Try Again");
+          }
+        } else {
+          openErrorSB("Something Wrong!Please Try Again");
+        }
+      });
   };
 
   const closeErrorSB = () => setErrorSB(false);
@@ -79,17 +116,17 @@ function Basic() {
             Sign in
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your username and password to sign in
+            Enter your email and password to sign in
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
               <MDInput
-                value={data.username}
-                name="username"
-                type="username"
-                label="Username"
+                value={data.email}
+                name="email"
+                type="email"
+                label="Email"
                 onChange={handleInputChange}
                 fullWidth
               />
@@ -116,7 +153,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton variant="gradient" color="info" fullWidth onClick={handleSignIn}>
                 sign in
               </MDButton>
             </MDBox>
