@@ -8,8 +8,4 @@ const configHeaders = {
 };
 
 export const userSignIn = (userData) =>
-  axios.post(
-    `https://us-central1-case-module.cloudfunctions.net/server/api/v1/signin`,
-    userData,
-    configHeaders
-  );
+  axios.post(`${process.env.REACT_APP_HOST_URL}/api/v1/signin`, userData, configHeaders);
