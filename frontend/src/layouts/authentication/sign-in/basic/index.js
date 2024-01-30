@@ -60,10 +60,8 @@ function Basic() {
           localStorage.setItem("EMAIL", response.data.user.email);
           localStorage.setItem("ROLE", response.data.user.role);
         }
-        // setUser(dispatch, user.data.payload);
-        console.log("response: ", response);
-        console.log("Response Success");
-        // navigate("/dashboards/security-pic-area");
+        setUser(dispatch, response.data.user);
+        navigate("/dashboards/security-pic-area");
       })
       .catch((err) => {
         if (err && err.response) {

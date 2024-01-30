@@ -1,9 +1,10 @@
 import axios from "axios";
+import { HOST_URL } from "./URL";
 
 const getToken = () => localStorage.getItem("ACCESS_TOKEN");
 
 export const getEmployes = () =>
-  axios.get(`${process.env.REACT_APP_HOST_URL}/api/v1/employes`, {
+  axios.get(`${HOST_URL}/api/v1/employes`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { HOST_URL } from "./URL";
 
 const configHeaders = {
   headers: {
@@ -7,8 +8,4 @@ const configHeaders = {
 };
 
 export const userSignIn = (userData) =>
-  axios.post(
-    `https://us-central1-case-module.cloudfunctions.net/server/api/v1/signin`,
-    userData,
-    configHeaders
-  );
+  axios.post(`${HOST_URL}/api/v1/signin`, userData, configHeaders);
