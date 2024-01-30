@@ -29,7 +29,7 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 
 // Layouts Component
 import SignInBasic from "layouts/authentication/sign-in/basic";
-import RegisterStepper from "layouts/authentication/sign-up/Validate";
+import RegisterStepper from "layouts/authentication/sign-up/cover";
 
 // Images
 import brandWhite from "assets/images/logo-ct.png";
