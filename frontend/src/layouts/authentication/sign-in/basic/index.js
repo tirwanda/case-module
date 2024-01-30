@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -22,9 +22,15 @@ import MDSnackbar from "components/MDSnackbar";
 import { userSignIn } from "api/authAPI";
 
 import qs from "query-string";
+import jwtDecode from "jwt-decode";
+
+// Context
+import { useMaterialUIController, setUser } from "context";
+import { getEmployes } from "api/employesAPI";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
+  const [, dispatch] = useMaterialUIController();
   const [message, setMessage] = useState("");
   const [errorSB, setErrorSB] = useState(false);
 
@@ -33,6 +39,7 @@ function Basic() {
     password: "",
   };
   const [data, setData] = useState(initialState);
+  const navigate = useNavigate();
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
@@ -43,22 +50,32 @@ function Basic() {
     });
   };
 
+  const getToken = async () => {
+    try {
+      const decode = jwtDecode(localStorage.getItem("ACCESS_TOKEN"));
+      localStorage.setItem("EXPIRES_IN", decode.exp);
+    } catch (error) {
+      localStorage.clear();
+      navigate("/sign-in");
+    }
+  };
+
   const handleSignIn = async (event) => {
     event.preventDefault();
     console.log(data);
     await userSignIn(qs.stringify(data))
       .then((response) => {
-        // if (response.status === 200) {
-        //   localStorage.setItem("ACCESS_TOKEN", response.data.access_token);
-        //   localStorage.setItem("REFRESH_TOKEN", response.data.refresh_token);
-        //   localStorage.setItem("USERNAME", response.data.username);
-        // }
-        console.log(response);
+        if (response.status === 201) {
+          localStorage.setItem("ACCESS_TOKEN", response.data.token);
+          localStorage.setItem("EMAIL", response.data.user.email);
+          localStorage.setItem("ROLE", response.data.user.role);
+        }
+        // setUser(dispatch, user.data.payload);
+        navigate("/dashboards/security-pic-area");
       })
-      // .then(() => {
-      //   getToken();
-      //   getUser();
-      // })
+      .then(() => {
+        getToken();
+      })
       .catch((err) => {
         if (err && err.response) {
           switch (err.response.status) {

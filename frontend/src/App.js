@@ -33,6 +33,7 @@ import SignInBasic from "layouts/authentication/sign-in/basic";
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
+import SecurityPICArea from "layouts/dashboards/securityPICArea";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -47,7 +48,9 @@ export default function App() {
     darkMode,
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
+  const [render, setRender] = useState(false);
   const { pathname } = useLocation();
+  const [customRoutes, setCustomRoutes] = useState(routes);
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -116,6 +119,48 @@ export default function App() {
     </MDBox>
   );
 
+  function getDashboardRoutes() {
+    const role = localStorage.getItem("ROLE");
+
+    if (role === "ROLE_ADMIN" || role === "ROLE_USER") {
+      return [
+        {
+          name: "Security PIC Area",
+          key: "Security PIC Area",
+          route: "/dashboards/security-pic-area",
+          component: <SecurityPICArea />,
+        },
+      ];
+    }
+    return null;
+  }
+
+  const handleRoutes = () => {
+    const newRoutes = [...customRoutes];
+    const posDashboardSideNav = newRoutes.findIndex((route) => route.key === "dashboards");
+
+    newRoutes[posDashboardSideNav].collapse = getDashboardRoutes();
+
+    setCustomRoutes(newRoutes);
+  };
+
+  // Setting the dir attribute for the body element
+  useEffect(() => {
+    document.body.setAttribute("dir", direction);
+    handleRoutes();
+  }, [direction]);
+
+  // Setting page scroll to 0 when changing the route
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.scrollingElement.scrollTop = 0;
+
+    handleRoutes();
+    setTimeout(() => {
+      setRender(true);
+    }, 1000);
+  }, [pathname]);
+
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
@@ -136,7 +181,7 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         <Route path="/sign-in" element={<SignInBasic />} />
-        {getRoutes(routes)}
+        {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
         <Route path="*" element={<Navigate to="/sign-in" />} />
       </Routes>
     </ThemeProvider>
