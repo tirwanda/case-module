@@ -179,7 +179,7 @@ function Basic() {
                 Don&apos;t have an account?{" "}
                 <MDTypography
                   component={Link}
-                  to="/sign-up"
+                  to="/registration"
                   variant="button"
                   color="info"
                   fontWeight="medium"

@@ -29,6 +29,7 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 
 // Layouts Component
 import SignInBasic from "layouts/authentication/sign-in/basic";
+import RegisterStepper from "layouts/authentication/sign-up/Validate";
 
 // Images
 import brandWhite from "assets/images/logo-ct.png";
@@ -181,6 +182,8 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         <Route path="/sign-in" element={<SignInBasic />} />
+        <Route path="/registration" element={<RegisterStepper />} />
+        <Route path="/dashboards/security-pic-area" element={<SecurityPICArea />} />
         {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
         <Route path="*" element={<Navigate to="/sign-in" />} />
       </Routes>
