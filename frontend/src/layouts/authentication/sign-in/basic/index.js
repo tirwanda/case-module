@@ -60,7 +60,7 @@ function Basic() {
           localStorage.setItem("EMAIL", response.data.user.email);
           localStorage.setItem("ROLE", response.data.user.role);
         }
-        setUser(dispatch, user.data.payload);
+        // setUser(dispatch, user.data.payload);
         console.log("response: ", response.data.user.role);
         navigate("/dashboards/security-pic-area");
       })
