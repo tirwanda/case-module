@@ -61,7 +61,8 @@ function Basic() {
           localStorage.setItem("ROLE", response.data.user.role);
         }
         // setUser(dispatch, user.data.payload);
-        console.log("response: ", response.data.user.role);
+        console.log("response: ", response);
+        console.log("Response Success");
         // navigate("/dashboards/security-pic-area");
       })
       .catch((err) => {
@@ -74,9 +75,11 @@ function Basic() {
               openErrorSB("Authentication Failed.Bad Credentials");
               break;
             default:
+              console.log("err: ", err);
               openErrorSB("Something Wrong!Please Try Again");
           }
         } else {
+          console.log("err: ", err);
           openErrorSB("Something Wrong!Please Try Again");
         }
       });
