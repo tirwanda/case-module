@@ -53,7 +53,7 @@ function Basic() {
   const handleSignIn = async (event) => {
     event.preventDefault();
     console.log(data);
-    await userSignIn(qs.stringify(data))
+    await userSignIn(data)
       .then((response) => {
         if (response.status === 201) {
           localStorage.setItem("ACCESS_TOKEN", response.data.token);
