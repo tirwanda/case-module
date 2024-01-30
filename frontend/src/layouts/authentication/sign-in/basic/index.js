@@ -62,7 +62,7 @@ function Basic() {
         }
         // setUser(dispatch, user.data.payload);
         console.log("response: ", response.data.user.role);
-        navigate("/dashboards/security-pic-area");
+        // navigate("/dashboards/security-pic-area");
       })
       .catch((err) => {
         if (err && err.response) {
