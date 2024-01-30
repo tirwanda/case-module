@@ -58,7 +58,8 @@ function SecurityPICArea() {
   };
 
   useEffect(() => {
-    getPICArea();
+    // getPICArea();
+    console.log("employes: ", employes);
   }, []);
 
   const renderSuccessSB = (

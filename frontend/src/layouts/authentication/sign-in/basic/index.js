@@ -50,16 +50,6 @@ function Basic() {
     });
   };
 
-  const getToken = async () => {
-    try {
-      const decode = jwtDecode(localStorage.getItem("ACCESS_TOKEN"));
-      localStorage.setItem("EXPIRES_IN", decode.exp);
-    } catch (error) {
-      localStorage.clear();
-      navigate("/sign-in");
-    }
-  };
-
   const handleSignIn = async (event) => {
     event.preventDefault();
     console.log(data);
@@ -70,11 +60,9 @@ function Basic() {
           localStorage.setItem("EMAIL", response.data.user.email);
           localStorage.setItem("ROLE", response.data.user.role);
         }
-        // setUser(dispatch, user.data.payload);
+        setUser(dispatch, user.data.payload);
+        console.log("response: ", response.data.user.role);
         navigate("/dashboards/security-pic-area");
-      })
-      .then(() => {
-        getToken();
       })
       .catch((err) => {
         if (err && err.response) {
