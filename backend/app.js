@@ -1,12 +1,12 @@
 const express = require('express');
 const app = express();
-const cors = require('cors')({ origin: true });
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const ErrorHandler = require('./middleware/error');
 
 app.use(express.json());
-app.use(cors);
+app.use(cors());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
