@@ -22,17 +22,16 @@ import MDSnackbar from "components/MDSnackbar";
 import { userSignIn } from "api/authAPI";
 
 import qs from "query-string";
-import jwtDecode from "jwt-decode";
 
 // Context
 import { useMaterialUIController, setUser } from "context";
-import { getEmployes } from "api/employesAPI";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   const [, dispatch] = useMaterialUIController();
   const [message, setMessage] = useState("");
   const [errorSB, setErrorSB] = useState(false);
+  const [onSignIn, setOnSignIn] = useState(false);
 
   const initialState = {
     email: "",
@@ -52,7 +51,7 @@ function Basic() {
 
   const handleSignIn = async (event) => {
     event.preventDefault();
-    console.log(data);
+    setOnSignIn(true);
     await userSignIn(qs.stringify(data))
       .then((response) => {
         if (response.status === 201) {
@@ -64,6 +63,7 @@ function Basic() {
         navigate("/dashboards/security-pic-area");
       })
       .catch((err) => {
+        setOnSignIn(false);
         if (err && err.response) {
           switch (err.response.status) {
             case 400:
@@ -159,7 +159,13 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth onClick={handleSignIn}>
+              <MDButton
+                variant="gradient"
+                color="info"
+                fullWidth
+                onClick={handleSignIn}
+                disabled={onSignIn}
+              >
                 sign in
               </MDButton>
             </MDBox>

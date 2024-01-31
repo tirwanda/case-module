@@ -10,7 +10,7 @@ function FormField({ label, ...rest }) {
 
 // typechecking props for FormField
 FormField.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
 };
 
 export default FormField;
