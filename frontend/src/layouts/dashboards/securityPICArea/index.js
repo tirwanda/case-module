@@ -67,7 +67,6 @@ function SecurityPICArea() {
     if (role === "ROLE_MANAGER" || role === "ROLE_ADMIN" || role === "ROLE_USER") {
       getEmployes()
         .then((res) => {
-          console.log("res: ", res);
           setEmployes({
             ...employes,
             rows: res.data.employes.map((item) => ({

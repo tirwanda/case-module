@@ -69,7 +69,7 @@ exports.getAllEmployes = catchAsyncErrors(async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			elmployes: employes,
+			employes: employes,
 		});
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 401));
