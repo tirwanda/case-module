@@ -27,6 +27,10 @@ const employeeSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		company: {
+			type: String,
+			default: '',
+		},
 		status: {
 			type: String,
 			default: 'Active',

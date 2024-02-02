@@ -1,4 +1,5 @@
 const Employee = require('../../models/EmployeeModel.js');
+const PICArea = require('../../models/PICAreaModel.js');
 const ErrorHandler = require('../../utils/ErrorHandler.js');
 const catchAsyncErrors = require('../../middleware/catchAsyncErrors.js');
 
@@ -11,6 +12,7 @@ exports.createEmployee = catchAsyncErrors(async (req, res, next) => {
 			jabatan,
 			phone,
 			email,
+			company,
 			effectiveDate,
 			endEffectiveDate,
 		} = req.body;
@@ -22,13 +24,14 @@ exports.createEmployee = catchAsyncErrors(async (req, res, next) => {
 				.json({ success: false, message: 'Employee already exists' });
 		}
 
-		createEmployee = await Employee.create({
+		const createEmployee = await Employee.create({
 			plant,
 			name,
 			nrp,
 			jabatan,
 			phone,
 			email,
+			company,
 			effectiveDate,
 			endEffectiveDate,
 		});
@@ -36,7 +39,7 @@ exports.createEmployee = catchAsyncErrors(async (req, res, next) => {
 		res.status(201).json({
 			success: true,
 			message: 'Employee created successfully',
-			data: createEmployee,
+			employee: createEmployee,
 		});
 	} catch (error) {
 		res.status(500).json({
@@ -58,6 +61,7 @@ exports.getAllEmployes = catchAsyncErrors(async (req, res, next) => {
 				phone: 1,
 				email: 1,
 				status: 1,
+				company: 1,
 				effectiveDate: 1,
 				endEffectiveDate: 1,
 			}
@@ -65,7 +69,7 @@ exports.getAllEmployes = catchAsyncErrors(async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			data: employes,
+			elmployes: employes,
 		});
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 401));
@@ -82,7 +86,7 @@ exports.getEmployeeById = catchAsyncErrors(async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			data: employee,
+			employee: employee,
 		});
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 401));
@@ -91,28 +95,29 @@ exports.getEmployeeById = catchAsyncErrors(async (req, res, next) => {
 
 exports.updateEmployee = catchAsyncErrors(async (req, res, next) => {
 	try {
-		const employee = await Employee.findById(req.params.employeeId);
+		const checkEmployee = await Employee.findById(req.params.employeeId);
 
 		if (!employee) {
 			return next(new ErrorHandler('Employee not found', 404));
 		}
 
-		employee.plant = req.body.plant;
-		employee.name = req.body.name;
-		employee.nrp = req.body.nrp;
-		employee.jabatan = req.body.jabatan;
-		employee.phone = req.body.phone;
-		employee.email = req.body.email;
-		employee.status = req.body.status;
-		employee.effectiveDate = req.body.effectiveDate;
-		employee.endEffectiveDate = req.body.endEffectiveDate;
+		checkEmployee.plant = req.body.plant;
+		checkEmployee.name = req.body.name;
+		checkEmployee.nrp = req.body.nrp;
+		checkEmployee.jabatan = req.body.jabatan;
+		checkEmployee.phone = req.body.phone;
+		checkEmployee.email = req.body.email;
+		checkEmployee.status = req.body.status;
+		checkEmployee.company = req.body.company;
+		checkEmployee.effectiveDate = req.body.effectiveDate;
+		checkEmployee.endEffectiveDate = req.body.endEffectiveDate;
 
-		await employee.save();
+		await checkEmployee.save();
 
 		res.status(201).json({
 			success: true,
 			responseStatus: 201,
-			data: employee,
+			employee: checkEmployee,
 		});
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 401));
@@ -121,13 +126,20 @@ exports.updateEmployee = catchAsyncErrors(async (req, res, next) => {
 
 exports.deleteEmployeeById = catchAsyncErrors(async (req, res, next) => {
 	try {
-		const employee = await Employee.findById(req.params.employeeId);
+		const checkEmployee = await Employee.findById(req.params.employeeId);
+		const checkPICArea = await PICArea.findOne({
+			employee: req.params.employeeId,
+		});
 
-		if (!employee) {
+		if (!checkEmployee) {
 			return next(new ErrorHandler('Employee not found', 404));
 		}
 
-		await employee.deleteOne();
+		if (checkPICArea) {
+			await checkPICArea.deleteOne();
+		}
+
+		await checkEmployee.deleteOne();
 
 		res.status(200).json({
 			success: true,
