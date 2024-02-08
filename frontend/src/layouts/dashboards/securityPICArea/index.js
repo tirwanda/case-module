@@ -22,9 +22,10 @@ import MDSnackbar from "components/MDSnackbar";
 import MDInput from "components/MDInput";
 import FormField from "layouts/applications/wizard/components/FormField";
 import MDButton from "components/MDButton";
+import { getAllPICArea } from "api/picAreaAPI";
 
 function SecurityPICArea() {
-  const [employes, setEmployes] = useState(dataTableData);
+  const [picAreas, setPICAreas] = useState(dataTableData);
   const [successSB, setSuccesSB] = useState(false);
   const [errorSB, setErrorSB] = useState(false);
   const [message, setMessage] = useState("");
@@ -65,12 +66,12 @@ function SecurityPICArea() {
     const role = localStorage.getItem("ROLE");
 
     if (role === "ROLE_MANAGER" || role === "ROLE_ADMIN" || role === "ROLE_USER") {
-      getEmployes()
+      getAllPICArea()
         .then((res) => {
-          setEmployes({
-            ...employes,
-            rows: res.data.employes.map((item) => ({
-              ...item,
+          setPICAreas({
+            ...picAreas,
+            rows: res.data.PICAreas.map((item) => ({
+              ...item.employee,
             })),
           });
         })
@@ -260,7 +261,7 @@ function SecurityPICArea() {
               Master Data Security Area
             </MDTypography>
           </MDBox>
-          <DataTable table={employes} canSearch />
+          <DataTable table={picAreas} canSearch />
         </Card>
         {renderSuccessSB}
         {renderErrorSB}

@@ -97,7 +97,7 @@ exports.updateEmployee = catchAsyncErrors(async (req, res, next) => {
 	try {
 		const checkEmployee = await Employee.findById(req.params.employeeId);
 
-		if (!employee) {
+		if (!checkEmployee) {
 			return next(new ErrorHandler('Employee not found', 404));
 		}
 

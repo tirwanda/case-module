@@ -10,3 +10,27 @@ export const getEmployes = () =>
       Authorization: `Bearer ${getToken()}`,
     },
   });
+
+export const addEmployee = (data) =>
+  axios.post(`${HOST_URL}/api/v1/create-employee`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+export const updateEmployee = (data) =>
+  axios.put(`${HOST_URL}/api/v1/employee/${data._id}`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+export const deleteEmployee = (id) =>
+  axios.delete(`${HOST_URL}/api/v1/employee/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });

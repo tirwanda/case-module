@@ -35,6 +35,7 @@ import RegisterStepper from "layouts/authentication/sign-up/cover";
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 import SecurityPICArea from "layouts/dashboards/securityPICArea";
+import Employes from "layouts/dashboards/employes";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -130,6 +131,12 @@ export default function App() {
           key: "Security PIC Area",
           route: "/dashboards/security-pic-area",
           component: <SecurityPICArea />,
+        },
+        {
+          name: "Employes",
+          key: "Employes",
+          route: "/dashboards/employes",
+          component: <Employes />,
         },
       ];
     }
