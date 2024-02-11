@@ -72,6 +72,67 @@ exports.getPICAreaById = catchAsyncErrors(async (req, res, next) => {
 	}
 });
 
+exports.findEmployeesNotInPICArea = catchAsyncErrors(async (req, res, next) => {
+	try {
+		// Ambil semua ID karyawan yang sudah terdaftar di PIC Area
+		const employeesInPICArea = await PICArea.distinct('employee');
+
+		// Cari karyawan yang belum terdaftar di PIC Area
+		const employeesNotInPICArea = await Employee.find({
+			_id: { $nin: employeesInPICArea },
+		});
+
+		res.status(200).json({
+			success: true,
+			count: employeesNotInPICArea.length,
+			employes: employeesNotInPICArea,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
+
+exports.searchPICArea = catchAsyncErrors(async (req, res, next) => {
+	try {
+		let query = {};
+
+		// Mendapatkan kriteria pencarian dari query string
+		const { employeeName, beginEffectiveDate, endEffectiveDate } = req.body;
+
+		// Memeriksa apakah kriteria pencarian diberikan, dan mengonfigurasi query sesuai dengan kriteria yang diberikan
+		if (employeeName) {
+			query['employee.name'] = { $regex: employeeName, $options: 'i' }; // Pencarian case-insensitive
+		}
+		if (beginEffectiveDate) {
+			query.beginEffectiveDate = beginEffectiveDate;
+		}
+		if (endEffectiveDate) {
+			query.endEffectiveDate = endEffectiveDate;
+		}
+
+		// Melakukan pencarian berdasarkan query yang telah dikonfigurasi
+		const picAreas = await PICArea.find(query).populate('employee');
+
+		// Memeriksa apakah hasil pencarian tidak ditemukan
+		if (!picAreas || picAreas.length === 0) {
+			return res.status(404).json({
+				success: false,
+				message: 'No PIC Areas found for the given criteria',
+			});
+		}
+
+		// Mengirimkan hasil pencarian
+		res.status(200).json({
+			success: true,
+			count: picAreas.length,
+			data: picAreas,
+		});
+	} catch (error) {
+		// Menangani kesalahan yang mungkin terjadi selama pencarian
+		return next(new ErrorHandler(error.message, 500));
+	}
+});
+
 exports.updatePICArea = catchAsyncErrors(async (req, res, next) => {
 	try {
 		const checkPICArea = await PICArea.findById(req.params.PICAreaId);
