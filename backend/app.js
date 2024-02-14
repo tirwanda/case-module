@@ -22,10 +22,12 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
 const user = require('./routes/web/userRoutes');
 const employee = require('./routes/web/employeeRoutes');
 const PICArea = require('./routes/web/PICAreaRoutes');
+const incident = require('./routes/web/incidentRoutes');
 
 app.use('/api/v1', user);
 app.use('/api/v1', employee);
 app.use('/api/v1', PICArea);
+app.use('/api/v1', incident);
 
 // it's for errorHandeling
 app.use(ErrorHandler);
