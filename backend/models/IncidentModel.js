@@ -52,7 +52,7 @@ const incidentSchema = new mongoose.Schema(
 		},
 		reportSource: {
 			type: String,
-			default: '',
+			default: 'Laporan User',
 		},
 		chronology: {
 			type: String,

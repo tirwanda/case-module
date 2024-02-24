@@ -190,7 +190,6 @@ export default function App() {
       <Routes>
         <Route path="/sign-in" element={<SignInBasic />} />
         <Route path="/registration" element={<RegisterStepper />} />
-        <Route path="/dashboards/security-pic-area" element={<SecurityPICArea />} />
         {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
         <Route path="*" element={<Navigate to="/sign-in" />} />
       </Routes>

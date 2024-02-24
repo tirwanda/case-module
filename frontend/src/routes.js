@@ -1,6 +1,7 @@
 import ProfileOverview from "layouts/pages/profile/profile-overview";
 import Settings from "layouts/pages/account/settings";
 import SignInBasic from "layouts/authentication/sign-in/basic";
+import CreateIncident from "layouts/incident/create-incident";
 
 // Case Module Security components
 import MDAvatar from "components/MDAvatar";
@@ -10,6 +11,7 @@ import Icon from "@mui/material/Icon";
 
 // Images
 import profilePicture from "assets/images/team-3.jpg";
+import Incidents from "layouts/incident/incidents";
 
 const routes = [
   {
@@ -49,10 +51,23 @@ const routes = [
   { type: "title", title: "Pages", key: "title-pages" },
   {
     type: "collapse",
-    name: "Applications",
-    key: "applications",
+    name: "Incident",
+    key: "incidents",
     icon: <Icon fontSize="medium">apps</Icon>,
-    collapse: [],
+    collapse: [
+      {
+        name: "List Incident",
+        key: "list-incident",
+        route: "/pages/incident/list-incident",
+        component: <Incidents />,
+      },
+      {
+        name: "Create Incident",
+        key: "create-incident",
+        route: "/pages/incident/create-incident",
+        component: <CreateIncident />,
+      },
+    ],
   },
   {
     type: "collapse",
