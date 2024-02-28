@@ -36,6 +36,7 @@ import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 import SecurityPICArea from "layouts/dashboards/securityPICArea";
 import Employes from "layouts/dashboards/employes";
+import UpdateIncident from "layouts/incident/update-incident";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -190,6 +191,7 @@ export default function App() {
       <Routes>
         <Route path="/sign-in" element={<SignInBasic />} />
         <Route path="/registration" element={<RegisterStepper />} />
+        <Route path="/pages/incident/:incidentId" element={<UpdateIncident />} />
         {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
         <Route path="*" element={<Navigate to="/sign-in" />} />
       </Routes>

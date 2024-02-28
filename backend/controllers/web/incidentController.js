@@ -100,6 +100,7 @@ exports.updateIncident = catchAsyncErrors(async (req, res, next) => {
 			location,
 			incidentDate,
 			phone,
+			status,
 			reportSource,
 		} = req.body;
 
@@ -119,6 +120,7 @@ exports.updateIncident = catchAsyncErrors(async (req, res, next) => {
 				incidentDate,
 				phone,
 				reportSource,
+				status,
 			},
 			{
 				new: true,
@@ -149,7 +151,7 @@ exports.deleteIncident = catchAsyncErrors(async (req, res, next) => {
 			incident.reportVerivications = null;
 		}
 
-		if (incident.evidences.length > 0) {
+		if (incident.evidences.length >= 1) {
 			incident.evidences.forEach(async (evidence) => {
 				await evidence.remove();
 			});

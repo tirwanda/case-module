@@ -51,7 +51,7 @@ function DetailIncident() {
   const handleSubmitForm = async () => {
     setIsSubmited(true);
     await addIncident(incidentDetail).then((response) => {
-      navigate("/dashboards/security-pic-area");
+      navigate("/pages/incident/list-incident");
       setIsSubmited(false);
     });
   };

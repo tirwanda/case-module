@@ -22,11 +22,12 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 // Data
 import dataTableData from "layouts/incident/incidents/data/dataTableData";
-import MDSnackbar from "components/MDSnackbar";
 import MDInput from "components/MDInput";
 import FormField from "layouts/applications/wizard/components/FormField";
 import MDButton from "components/MDButton";
 import { getIncidents } from "api/incidentAPI";
+import { Padding } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 function Incidents() {
   const [incidentList, setIncidentList] = useState(dataTableData);
@@ -49,16 +50,31 @@ function Incidents() {
               <MDButton
                 variant="text"
                 color="warning"
+                size="small"
+                style={{ padding: "10px" }}
                 // onClick={() => handleDelete(employee._id, employee.name)}
               >
                 <Icon>search</Icon>&nbsp;Investigate
               </MDButton>
               <MDButton
+                component={Link}
+                size="small"
+                to={`/pages/incident/${incident._id}`}
                 variant="text"
                 color="dark"
+                style={{ padding: "10px" }}
                 // onClick={() => handleUpdateEmployee(employee)}
               >
                 <Icon>edit</Icon>&nbsp;Update
+              </MDButton>
+              <MDButton
+                size="small"
+                variant="text"
+                color="dark"
+                style={{ padding: "10px" }}
+                // onClick={() => handleUpdateEmployee(employee)}
+              >
+                <Icon>info</Icon>&nbsp;Detail
               </MDButton>
             </MDBox>
           ),
@@ -70,6 +86,7 @@ function Incidents() {
   useEffect(() => {
     getIncidentList();
   }, []);
+
   return (
     <DashboardLayout>
       <DashboardNavbar />

@@ -26,3 +26,11 @@ export const getIncident = (id) =>
       Authorization: `Bearer ${getToken()}`,
     },
   });
+
+export const updateIncident = (id, data) =>
+  axios.put(`${HOST_URL}/api/v1/incident/${id}`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });

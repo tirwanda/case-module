@@ -22,10 +22,12 @@ const incidentSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
-		incidentPicture: {
-			type: String,
-			default: '',
-		},
+		incidentPicture: [
+			{
+				type: String,
+				default: null,
+			},
+		],
 		descriptions: {
 			type: String,
 			required: [true, 'Please enter incident description'],
@@ -62,6 +64,10 @@ const incidentSchema = new mongoose.Schema(
 			type: mongoose.Types.ObjectId,
 			ref: 'Report_Verivication',
 			default: null,
+		},
+		status: {
+			type: String,
+			default: 'Open',
 		},
 		evidences: [
 			{
