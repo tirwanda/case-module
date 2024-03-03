@@ -63,16 +63,16 @@ function Incidents() {
                 variant="text"
                 color="dark"
                 style={{ padding: "10px" }}
-                // onClick={() => handleUpdateEmployee(employee)}
               >
                 <Icon>edit</Icon>&nbsp;Update
               </MDButton>
               <MDButton
+                component={Link}
+                to={`/pages/view-incident/${incident._id}`}
                 size="small"
                 variant="text"
                 color="dark"
                 style={{ padding: "10px" }}
-                // onClick={() => handleUpdateEmployee(employee)}
               >
                 <Icon>info</Icon>&nbsp;Detail
               </MDButton>

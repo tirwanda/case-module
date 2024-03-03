@@ -139,6 +139,11 @@ function Basic() {
             </MDBox>
             <MDBox mb={2}>
               <MDInput
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSignIn(e);
+                  }
+                }}
                 name="password"
                 type="password"
                 label="Password"
