@@ -48,11 +48,12 @@ function Incidents() {
               mr={{ xs: -1.5, sm: 0 }}
             >
               <MDButton
+                component={Link}
+                to={`/pages/investigate/${incident._id}`}
                 variant="text"
                 color="warning"
                 size="small"
                 style={{ padding: "10px" }}
-                // onClick={() => handleDelete(employee._id, employee.name)}
               >
                 <Icon>search</Icon>&nbsp;Investigate
               </MDButton>

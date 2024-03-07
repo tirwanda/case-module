@@ -10,7 +10,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DetailIncident from "./components/DetailIncident";
 
-function CreateCM() {
+function UpdateIncident() {
   return (
     <DashboardLayout>
       <DashboardNavbar showRoutes={false} />
@@ -34,4 +34,4 @@ function CreateCM() {
   );
 }
 
-export default CreateCM;
+export default UpdateIncident;

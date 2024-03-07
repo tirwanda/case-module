@@ -22,14 +22,17 @@ import IncidentInfo from "layouts/incident/view-incident/components/IncidentInfo
 import dataTableData from "layouts/incident/view-incident/data/dataTableData";
 import { getIncident } from "api/incidentAPI";
 import { useEffect, useState } from "react";
+import { set } from "date-fns";
 
 function ViewIncident() {
   const [incidentData, setIncidentData] = useState({});
+  const [incidentPicture, setIncidentPicture] = useState([]);
   const { incidentId } = useParams();
 
   const getDetailIncident = async () => {
     await getIncident(incidentId).then((response) => {
       setIncidentData(response.data.incident);
+      setIncidentPicture(response.data.incident.picture);
     });
   };
 
@@ -51,7 +54,7 @@ function ViewIncident() {
 
             <Grid container spacing={1}>
               <Grid item xs={12} lg={5} xl={5}>
-                <IncidentPicture />
+                <IncidentPicture image={incidentPicture} />
               </Grid>
               <Grid item xs={12} lg={6} sx={{ mx: "auto" }}>
                 <IncidentInfo incident={incidentData} />

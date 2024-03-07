@@ -34,3 +34,19 @@ export const updateIncident = (id, data) =>
       Authorization: `Bearer ${getToken()}`,
     },
   });
+
+export const updateIncidentByKaru = (id, data) =>
+  axios.put(`${HOST_URL}/api/v1/incident/update-by-karu/${id}`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+export const deleteIncidentPicture = (incidentId, pictureId) =>
+  axios.delete(`${HOST_URL}/api/v1/incident-picture/${incidentId}/${pictureId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });

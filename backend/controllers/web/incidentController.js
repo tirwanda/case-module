@@ -169,6 +169,49 @@ exports.deleteIncident = catchAsyncErrors(async (req, res, next) => {
 	}
 });
 
+exports.deleteIncidentPicture = async (req, res, next) => {
+	try {
+		const { incidentId, pictureId } = req.params;
+
+		// Temukan insiden berdasarkan ID
+		const incident = await Incident.findById(incidentId);
+
+		if (!incident) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Incident not found' });
+		}
+
+		let pictureIndex = -1;
+		incident.incidentPicture.forEach((picture, index) => {
+			var stringId = picture._id.toString();
+			if (stringId === pictureId) {
+				pictureIndex = index;
+			}
+		});
+
+		if (pictureIndex === -1) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Picture not found' });
+		}
+
+		// Hapus gambar dari array incidentPicture
+		incident.incidentPicture.splice(pictureIndex, 1);
+
+		// Simpan perubahan
+		await incident.save();
+
+		return res.status(200).json({
+			success: true,
+			message: 'Picture deleted successfully',
+			incident,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+};
+
 exports.updateIncidentByKaru = catchAsyncErrors(async (req, res, next) => {
 	try {
 		const incident = await Incident.findById(req.params.id);
@@ -177,7 +220,14 @@ exports.updateIncidentByKaru = catchAsyncErrors(async (req, res, next) => {
 			return next(new ErrorHandler('Incident not found', 404));
 		}
 
-		const { chronology, reportVerivications, evidences } = req.body;
+		const { chronology, reportVerivications, evidences, incidentPicture } =
+			req.body;
+
+		if (incidentPicture) {
+			incidentPicture.forEach((picture) => {
+				incident.incidentPicture.push(picture);
+			});
+		}
 
 		if (chronology) {
 			incident.chronology = chronology;

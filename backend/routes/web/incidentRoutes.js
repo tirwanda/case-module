@@ -6,6 +6,7 @@ const {
 	getIncidentById,
 	deleteIncident,
 	updateIncidentByKaru,
+	deleteIncidentPicture,
 } = require('../../controllers/web/incidentController');
 
 const { isAuthenticatedUser } = require('../../middleware/auth');
@@ -24,5 +25,9 @@ router.route('/incident/:id').delete(isAuthenticatedUser, deleteIncident);
 router
 	.route('/incident/update-by-karu/:id')
 	.put(isAuthenticatedUser, updateIncidentByKaru);
+
+router
+	.route('/incident-picture/:incidentId/:pictureId')
+	.delete(isAuthenticatedUser, deleteIncidentPicture);
 
 module.exports = router;

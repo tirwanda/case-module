@@ -24,8 +24,14 @@ const incidentSchema = new mongoose.Schema(
 		},
 		incidentPicture: [
 			{
-				type: String,
-				default: null,
+				name: {
+					type: String,
+					default: '',
+				},
+				url: {
+					type: String,
+					default: '',
+				},
 			},
 		],
 		descriptions: {
