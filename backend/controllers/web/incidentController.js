@@ -64,7 +64,9 @@ exports.getAllIncidents = catchAsyncErrors(async (req, res, next) => {
 
 exports.getIncidentById = catchAsyncErrors(async (req, res, next) => {
 	try {
-		const incident = await Incident.findById(req.params.id);
+		const incident = await Incident.findById(req.params.id)
+			.populate('reportVerivications')
+			.populate('evidences');
 
 		if (!incident) {
 			return next(new ErrorHandler('Incident not found', 404));
@@ -234,10 +236,24 @@ exports.updateIncidentByKaru = catchAsyncErrors(async (req, res, next) => {
 		}
 
 		if (reportVerivications) {
-			const verivifation = await ReportVerivications.create(
-				reportVerivications
-			);
-			incident.reportVerivications = verivifation;
+			if (reportVerivications._id) {
+				const verivifation =
+					await ReportVerivications.findByIdAndUpdate(
+						reportVerivications._id,
+						reportVerivications,
+						{
+							new: true,
+							runValidators: true,
+							useFindAndModify: false,
+						}
+					);
+				incident.reportVerivications = verivifation;
+			} else {
+				const verivifation = await ReportVerivications.create(
+					reportVerivications
+				);
+				incident.reportVerivications = verivifation;
+			}
 		}
 
 		if (evidences) {
@@ -247,13 +263,58 @@ exports.updateIncidentByKaru = catchAsyncErrors(async (req, res, next) => {
 					return newEvidence;
 				})
 			);
-			incident.evidences = evidenceList;
+			incident.evidences.push(...evidenceList);
 		}
 		incident.save();
 
 		res.status(200).json({
 			success: true,
 			message: 'Incident updated successfully',
+			incident,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
+
+exports.deleteEvidence = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const { incidentId, evidenceId } = req.params;
+
+		// Temukan insiden berdasarkan ID
+		const incident = await Incident.findById(incidentId).populate(
+			'evidences'
+		);
+
+		if (!incident) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Incident not found' });
+		}
+
+		// Temukan bukti berdasarkan ID
+		const evidence = await Evidence.findById(evidenceId);
+
+		if (!evidence) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Evidence not found' });
+		}
+
+		// Hapus bukti dari array evidences
+		incident.evidences = incident.evidences.filter(
+			(evidence) => evidence._id.toString() !== evidenceId
+		);
+
+		// Hapus bukti dari database
+		await evidence.deleteOne();
+
+		// Simpan perubahan
+		await incident.save();
+
+		return res.status(200).json({
+			success: true,
+			message: 'Evidence deleted successfully',
 			incident,
 		});
 	} catch (error) {

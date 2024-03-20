@@ -11,13 +11,9 @@ import MDBox from "components/MDBox";
 
 // Images
 import image1 from "assets/images/products/No-Image.png";
-import image2 from "assets/images/products/No-Image.png";
 
-function ProductImages({ image }) {
-  const [images, setImages] = useState([
-    { src: "assets/images/products/No-Image.png" },
-    { src: "assets/images/products/No-Image.png" },
-  ]);
+function IncidentPicture({ image }) {
+  const [images, setImages] = useState([]);
   const [currentImage, setCurrentImage] = useState(image1);
   const [imgsViewer, setImgsViewer] = useState(false);
   const [imgsViewerCurrent, setImgsViewerCurrent] = useState(0);
@@ -33,14 +29,17 @@ function ProductImages({ image }) {
   const imgsViewerPrev = () => setImgsViewerCurrent(imgsViewerCurrent - 1);
 
   useEffect(() => {
-    if (image) {
-      image.map((img, index) => {
-        setImages((prevState) => {
-          return (prevState[index] = { src: img });
-        });
+    if (image?.length > 0) {
+      setCurrentImage(image[0].url);
+      const imageTemp = [];
+      image.forEach((element) => {
+        imageTemp.push({ src: element.url });
       });
+      setImages(imageTemp);
     }
-  }, []);
+  }, [image]);
+
+  useEffect(() => {}, [images]);
 
   return (
     <MDBox>
@@ -53,10 +52,9 @@ function ProductImages({ image }) {
         onClickNext={imgsViewerNext}
         backdropCloseable
       />
-
       <MDBox
         component="img"
-        src={currentImage}
+        src={currentImage || image1}
         alt="Product Image"
         shadow="lg"
         borderRadius="lg"
@@ -64,10 +62,11 @@ function ProductImages({ image }) {
         onClick={openImgsViewer}
       />
       <MDBox mt={2} pt={1}>
-        {image >= 1 && (
+        {images.length >= 1 && (
           <Stack direction="row" spacing={3}>
             {images.map((img, index) => (
               <MDBox
+                key={index}
                 component="img"
                 id={index}
                 src={img.src}
@@ -83,39 +82,9 @@ function ProductImages({ image }) {
             ))}
           </Stack>
         )}
-        {image === undefined && (
-          <Stack direction="row" spacing={3}>
-            <MDBox
-              component="img"
-              id={0}
-              src={image1}
-              alt="small image 1"
-              borderRadius="lg"
-              shadow="md"
-              width="20%"
-              height="5rem"
-              minHeight="5rem"
-              sx={{ cursor: "pointer", objectFit: "cover" }}
-              onClick={handleSetCurrentImage}
-            />
-            <MDBox
-              component="img"
-              id={1}
-              src={image2}
-              alt="small image 2"
-              borderRadius="lg"
-              shadow="md"
-              width="20%"
-              height="5rem"
-              minHeight="5rem"
-              sx={{ cursor: "pointer", objectFit: "cover" }}
-              onClick={handleSetCurrentImage}
-            />
-          </Stack>
-        )}
       </MDBox>
     </MDBox>
   );
 }
 
-export default ProductImages;
+export default IncidentPicture;

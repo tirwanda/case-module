@@ -31,6 +31,18 @@ const employeeSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		department: {
+			type: String,
+			default: '',
+		},
+		division: {
+			type: String,
+			default: '',
+		},
+		organizationUnit: {
+			type: String,
+			default: '',
+		},
 		status: {
 			type: String,
 			default: 'Active',

@@ -32,7 +32,7 @@ function ViewIncident() {
   const getDetailIncident = async () => {
     await getIncident(incidentId).then((response) => {
       setIncidentData(response.data.incident);
-      setIncidentPicture(response.data.incident.picture);
+      setIncidentPicture(response.data.incident.incidentPicture);
     });
   };
 
@@ -52,14 +52,16 @@ function ViewIncident() {
               </MDTypography>
             </MDBox>
 
-            <Grid container spacing={1}>
-              <Grid item xs={12} lg={5} xl={5}>
-                <IncidentPicture image={incidentPicture} />
+            {incidentData && (
+              <Grid container spacing={1}>
+                <Grid item xs={12} lg={5} xl={5}>
+                  <IncidentPicture image={incidentData.incidentPicture} />
+                </Grid>
+                <Grid item xs={12} lg={6} sx={{ mx: "auto" }}>
+                  <IncidentInfo incident={incidentData} />
+                </Grid>
               </Grid>
-              <Grid item xs={12} lg={6} sx={{ mx: "auto" }}>
-                <IncidentInfo incident={incidentData} />
-              </Grid>
-            </Grid>
+            )}
 
             <MDBox mt={8} mb={2}>
               <MDBox mb={1} ml={2}>

@@ -7,15 +7,17 @@ import Grid from "@mui/material/Grid";
 // Material Dashboard 2 PRO React components
 import MDBox from "components/MDBox";
 
-// Create CM page components
 import Header from "layouts/incident/investigate/components/Header";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DetailIncident from "./components/DetailIncident";
 import IncidentPictures from "./components/IncidentPictures";
+import Chronology from "./components/Chronology";
+import ReportVerification from "./components/ReportVerification";
 
 // API
 import { getIncident } from "api/incidentAPI";
+import Evidence from "./components/Evidence";
 
 function Investigate() {
   const [incidentDetail, setIncidentDetail] = useState({});
@@ -48,7 +50,16 @@ function Investigate() {
                     <DetailIncident incidentInfo={incidentDetail} />
                   </Grid>
                   <Grid item xs={12}>
+                    <Chronology chronologyDetail={incidentDetail.chronology} />
+                  </Grid>
+                  <Grid item xs={12}>
                     <IncidentPictures incidentInfo={incidentDetail} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Evidence incidentInfo={incidentDetail} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ReportVerification incidentInfo={incidentDetail} />
                   </Grid>
                 </Grid>
               )}

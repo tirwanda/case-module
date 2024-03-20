@@ -18,7 +18,7 @@ import Card from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { updateIncidentByKaru, deleteIncidentPicture } from "api/incidentAPI";
-import { set } from "date-fns";
+import { getIncident } from "api/incidentAPI";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -34,60 +34,48 @@ const VisuallyHiddenInput = styled("input")({
 
 function IncidentPictures({ incidentInfo }) {
   const [pictures, setPictures] = useState(dataTableData);
+  const [onDelete, setOnDelete] = useState(false);
   const { incidentId } = useParams();
 
   const handleDeletePicture = async (pictureName, pictureId) => {
     try {
+      setOnDelete(true);
       const storageRef = ref(storage, `Incident-Pictures/${pictureName}`);
       await deleteIncidentPicture(incidentId, pictureId)
         .then((response) => {
-          const tempRows = [];
-          response.data.incidentPicture?.forEach((picture, index) => {
-            tempRows.push({
-              no: index + 1,
-              name: `Foto TKP - ${index + 1}`,
-              id: picture.name,
-              actions: (
-                <MDBox display="flex" justifyContent="space-between">
-                  <MDButton
-                    variant="gradient"
-                    color="error"
-                    onClick={() => handleDeletePicture(picture.name, picture._id)}
-                  >
-                    Delete
-                  </MDButton>
-                </MDBox>
-              ),
-            });
-          });
-          setPictures({ ...pictures, rows: tempRows });
+          picturesInit();
         })
         .then(() => {
           deleteObject(storageRef);
+          setOnDelete(false);
         });
     } catch (error) {
       console.error(error);
+      setOnDelete(false);
     }
   };
 
-  const picturesInit = () => {
+  const picturesInit = async () => {
     const tempRows = [];
-    incidentInfo.incidentPicture.forEach((picture, index) => {
-      tempRows.push({
-        no: index + 1,
-        name: `Foto TKP - ${index + 1}`,
-        id: picture.name,
-        actions: (
-          <MDBox display="flex" justifyContent="space-between">
-            <MDButton
-              variant="gradient"
-              color="error"
-              onClick={() => handleDeletePicture(picture.name, picture._id)}
-            >
-              Delete
-            </MDButton>
-          </MDBox>
-        ),
+    await getIncident(incidentId).then((response) => {
+      response.data.incident.incidentPicture.forEach((picture, index) => {
+        tempRows.push({
+          no: index + 1,
+          name: `Foto TKP - ${index + 1}`,
+          id: picture.name,
+          actions: (
+            <MDBox display="flex" justifyContent="space-between">
+              <MDButton
+                variant="gradient"
+                color="error"
+                disabled={onDelete}
+                onClick={() => handleDeletePicture(picture.name, picture._id)}
+              >
+                Delete
+              </MDButton>
+            </MDBox>
+          ),
+        });
       });
     });
 
@@ -121,6 +109,7 @@ function IncidentPictures({ incidentInfo }) {
                       <MDButton
                         variant="gradient"
                         color="error"
+                        disabled={onDelete}
                         onClick={() => handleDeletePicture(picture.name, picture._id)}
                       >
                         Delete
@@ -137,6 +126,7 @@ function IncidentPictures({ incidentInfo }) {
           });
       });
     }
+    document.getElementById("fileInput").value = null;
   };
 
   useEffect(() => {
@@ -144,9 +134,9 @@ function IncidentPictures({ incidentInfo }) {
   }, []);
 
   return (
-    <MDBox py={3}>
+    <MDBox py={1}>
       <Card sx={{ overflow: "visible" }}>
-        <MDBox mt={8} mb={2}>
+        <MDBox mt={3} mb={2}>
           <MDBox mb={1} ml={2}>
             <Grid container spacing={3}>
               <Grid item xs={12} lg={6} xl={5}>
@@ -167,6 +157,7 @@ function IncidentPictures({ incidentInfo }) {
                   >
                     <p style={{ color: "white" }}>Upload</p>
                     <VisuallyHiddenInput
+                      id="fileInput"
                       type="file"
                       onChange={(event) => uploadImage(event.target.files[0])}
                     />

@@ -50,3 +50,11 @@ export const deleteIncidentPicture = (incidentId, pictureId) =>
       Authorization: `Bearer ${getToken()}`,
     },
   });
+
+export const deleteEvidence = (incidentId, evidenceId) =>
+  axios.delete(`${HOST_URL}/api/v1/evidence/${incidentId}/${evidenceId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
