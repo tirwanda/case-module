@@ -26,6 +26,7 @@ import MDButton from "components/MDButton";
 import { addEmployee } from "api/employesAPI";
 import { deleteEmployee } from "api/employesAPI";
 import { updateEmployee } from "api/employesAPI";
+import { de } from "date-fns/locale";
 
 function Employes() {
   const [employes, setEmployes] = useState(dataTableData);
@@ -42,12 +43,24 @@ function Employes() {
     nrp: "",
     jabatan: "",
     phone: "",
+    department: "",
+    division: "",
     email: "",
     status: "Active",
     company: "",
   });
 
-  const [listPlant, setListPlant] = useState(["P1 Sunter", "P2 Pegangsaan", "P3 Cikarang"]);
+  const [listPlant, setListPlant] = useState([
+    "P1 Sunter",
+    "P2 Pegangsaan",
+    "Pulo Gadung",
+    "P3 Cikarang",
+    "P4 Karawang",
+    "P5 Karawang",
+    "P6 Deltamas",
+    "PQE",
+    "SRTC",
+  ]);
   const [searchParam, setSearchParam] = useState({
     plant: "",
     name: "",
@@ -55,6 +68,8 @@ function Employes() {
     jabatan: "",
     phone: "",
     email: "",
+    department: "",
+    division: "",
     status: "Active",
     company: "",
   });
@@ -86,6 +101,8 @@ function Employes() {
       jabatan: "",
       phone: "",
       email: "",
+      department: "",
+      division: "",
       status: "Active",
       company: "",
     });
@@ -626,6 +643,42 @@ function Employes() {
                   </MDBox>
                 </Grid>
               </Grid>
+
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} mb={1}>
+                  <MDBox>
+                    <MDBox display="inline-block">
+                      <MDTypography
+                        component="label"
+                        variant="button"
+                        fontWeight="regular"
+                        color="text"
+                        textTransform="capitalize"
+                      >
+                        Department
+                      </MDTypography>
+                    </MDBox>
+                    <FormField name="department" onChange={handleInputEmployeeChange} />
+                  </MDBox>
+                </Grid>
+                <Grid item xs={12} sm={6} mb={1}>
+                  <MDBox>
+                    <MDBox display="inline-block">
+                      <MDTypography
+                        component="label"
+                        variant="button"
+                        fontWeight="regular"
+                        color="text"
+                        textTransform="capitalize"
+                      >
+                        Division
+                      </MDTypography>
+                    </MDBox>
+                    <FormField name="division" onChange={handleInputEmployeeChange} />
+                  </MDBox>
+                </Grid>
+              </Grid>
+
               <Grid container spacing={3}>
                 <MDBox mt={3} ml="auto" display="flex">
                   <MDBox mr={1}>
@@ -828,6 +881,49 @@ function Employes() {
                     <FormField
                       defaultValue={employeeDetail.company}
                       name="company"
+                      onChange={handleInputEmployeeChange}
+                    />
+                  </MDBox>
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} mb={1}>
+                  <MDBox>
+                    <MDBox display="inline-block">
+                      <MDTypography
+                        component="label"
+                        variant="button"
+                        fontWeight="regular"
+                        color="text"
+                        textTransform="capitalize"
+                      >
+                        Department
+                      </MDTypography>
+                    </MDBox>
+                    <FormField
+                      defaultValue={employeeDetail.department}
+                      name="department"
+                      onChange={handleInputEmployeeChange}
+                    />
+                  </MDBox>
+                </Grid>
+                <Grid item xs={12} sm={6} mb={1}>
+                  <MDBox>
+                    <MDBox display="inline-block">
+                      <MDTypography
+                        component="label"
+                        variant="button"
+                        fontWeight="regular"
+                        color="text"
+                        textTransform="capitalize"
+                      >
+                        Division
+                      </MDTypography>
+                    </MDBox>
+                    <FormField
+                      defaultValue={employeeDetail.division}
+                      name="division"
                       onChange={handleInputEmployeeChange}
                     />
                   </MDBox>

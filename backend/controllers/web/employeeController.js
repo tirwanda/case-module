@@ -13,6 +13,8 @@ exports.createEmployee = catchAsyncErrors(async (req, res, next) => {
 			phone,
 			email,
 			company,
+			department,
+			division,
 			effectiveDate,
 			endEffectiveDate,
 		} = req.body;
@@ -32,6 +34,8 @@ exports.createEmployee = catchAsyncErrors(async (req, res, next) => {
 			phone,
 			email,
 			company,
+			department,
+			division,
 			effectiveDate,
 			endEffectiveDate,
 		});
@@ -62,6 +66,8 @@ exports.getAllEmployes = catchAsyncErrors(async (req, res, next) => {
 				email: 1,
 				status: 1,
 				company: 1,
+				department: 1,
+				division: 1,
 				effectiveDate: 1,
 				endEffectiveDate: 1,
 			}
@@ -108,6 +114,8 @@ exports.updateEmployee = catchAsyncErrors(async (req, res, next) => {
 		checkEmployee.phone = req.body.phone;
 		checkEmployee.email = req.body.email;
 		checkEmployee.status = req.body.status;
+		checkEmployee.department = req.body.department;
+		checkEmployee.division = req.body.division;
 		checkEmployee.company = req.body.company;
 		checkEmployee.effectiveDate = req.body.effectiveDate;
 		checkEmployee.endEffectiveDate = req.body.endEffectiveDate;
