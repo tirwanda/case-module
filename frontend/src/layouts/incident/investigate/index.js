@@ -18,6 +18,7 @@ import ReportVerification from "./components/ReportVerification";
 // API
 import { getIncident } from "api/incidentAPI";
 import Evidence from "./components/Evidence";
+import Victim from "./components/Victim";
 
 function Investigate() {
   const [incidentDetail, setIncidentDetail] = useState({});
@@ -57,6 +58,9 @@ function Investigate() {
                   </Grid>
                   <Grid item xs={12}>
                     <Evidence incidentInfo={incidentDetail} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Victim />
                   </Grid>
                   <Grid item xs={12}>
                     <ReportVerification incidentInfo={incidentDetail} />

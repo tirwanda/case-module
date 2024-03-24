@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { storage } from "firebase.js";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { v4 } from "uuid";
 import { Backdrop, Box, Fade, Icon, Modal } from "@mui/material";
 import { useParams } from "react-router-dom";
 
