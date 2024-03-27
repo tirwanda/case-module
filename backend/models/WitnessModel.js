@@ -27,6 +27,11 @@ const witnessSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		incident: {
+			type: mongoose.Types.ObjectId,
+			ref: 'Incident',
+			required: [true, 'Incident not found'],
+		},
 		createdAt: { type: Number, default: Date.now },
 		updatedAt: { type: Number, default: Date.now },
 	},

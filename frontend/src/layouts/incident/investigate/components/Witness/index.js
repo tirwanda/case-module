@@ -2,90 +2,39 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import MDBox from "components/MDBox";
+import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
+import DataTable from "examples/Tables/DataTable";
+import MDInput from "components/MDInput";
+import FormField from "../FormField";
+
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Backdrop, Box, Fade, Icon, Modal } from "@mui/material";
 
-import dataTableVictim from "../../data/dataTableVictim";
-import MDButton from "components/MDButton";
-import DataTable from "examples/Tables/DataTable";
-
-import { getVictimByIncidentId } from "api/victimAPI";
-import FormField from "../FormField";
-import MDInput from "components/MDInput";
+import dataTableWitness from "../../data/dataTableWitness";
 import { getAllPICArea } from "api/picAreaAPI";
-import { addVictim, deleteVictimById } from "api/victimAPI";
+import { getWitnessByIncidentId, addWitness, deleteWitnessById } from "api/witnessAPI";
 
-function Victim() {
-  const [victims, setVictims] = useState(dataTableVictim);
+function Witness() {
+  const [witnesses, setWitnesses] = useState(dataTableWitness);
   const [openModal, setOpenModal] = useState(false);
   const [picList, setPicList] = useState([]);
   const [picNameList, setPicNameList] = useState([]);
-  const [victimData, setVictimData] = useState({
+  const [witnessData, setWitnessData] = useState({
     type: "",
     name: "",
     KTP: "",
-    victimNrp: "",
+    witnessNrp: "",
     picId: "",
+    picName: "",
+    picDepartment: "",
     vendorName: "",
     incidentId: "",
   });
+
   const { incidentId } = useParams();
-
-  const handleDeleteVictim = async (victimId) => {
-    await deleteVictimById(victimId).then((response) => {
-      victimInit();
-    });
-  };
-
-  const handleAddVictim = async () => {
-    await addVictim(victimData).then((response) => {
-      setVictims({
-        ...victims,
-        rows: [
-          ...victims.rows,
-          {
-            type: response.data.victim.type,
-            name: response.data.victim.name,
-            ktp: response.data.victim.KTP,
-            nrpVictim: response.data.victim.victimNrp,
-            nrpPic: response.data.victim.pic.nrp,
-            picName: response.data.victim.pic.name,
-            picDepartment: response.data.victim.pic.department,
-            actions: (
-              <MDBox
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mt={{ xs: 2, sm: 0 }}
-                mr={{ xs: -1.5, sm: 0 }}
-              >
-                <MDButton
-                  variant="text"
-                  color="error"
-                  onClick={() => handleDeleteVictim(response.data.victim._id)}
-                >
-                  <Icon>delete</Icon>&nbsp;delete
-                </MDButton>
-              </MDBox>
-            ),
-          },
-        ],
-      });
-    });
-    setOpenModal(false);
-    setVictimData({
-      type: "",
-      name: "",
-      KTP: "",
-      victimNrp: "",
-      picId: "",
-      vendorName: "",
-      incidentId,
-    });
-  };
 
   const getPICList = async () => {
     const tempArray = [];
@@ -98,18 +47,39 @@ function Victim() {
     setPicNameList(tempArray);
   };
 
-  const victimInit = async () => {
-    const tempRows = [];
-    await getVictimByIncidentId(incidentId).then((response) => {
-      response.data.victims.forEach((victim) => {
-        tempRows.push({
-          type: victim.type,
-          name: victim.name,
-          ktp: victim.KTP,
-          nrpVictim: victim.victimNrp,
-          nrpPic: victim.pic.nrp,
-          picName: victim.pic.name,
-          picDepartment: victim.pic.department,
+  const handlePicChange = (name) => {
+    picList.forEach((pic) => {
+      if (pic.employee.name === name) setWitnessData({ ...witnessData, picId: pic.employee._id });
+    });
+  };
+
+  const handleDeleteWitness = async (witnessId) => {
+    await deleteWitnessById(witnessId).then((response) => {
+      witnessInit();
+    });
+  };
+
+  const handleAddWitness = async () => {
+    await addWitness(witnessData).then((response) => {
+      witnessInit();
+      handleCloseModal();
+    });
+  };
+
+  const handleCloseModal = () => setOpenModal(false);
+
+  const witnessInit = async () => {
+    const tempArray = [];
+    await getWitnessByIncidentId(incidentId).then((response) => {
+      response.data.witnesses?.forEach((witness) => {
+        tempArray.push({
+          type: witness.type,
+          name: witness.name,
+          ktp: witness.KTP,
+          nrpwitness: witness.witnessNrp,
+          nrpPic: witness.pic.nrp,
+          picName: witness.pic.name,
+          picDepartment: witness.pic.department,
           actions: (
             <MDBox
               display="flex"
@@ -118,7 +88,11 @@ function Victim() {
               mt={{ xs: 2, sm: 0 }}
               mr={{ xs: -1.5, sm: 0 }}
             >
-              <MDButton variant="text" color="error" onClick={() => handleDeleteVictim(victim._id)}>
+              <MDButton
+                variant="text"
+                color="error"
+                onClick={() => handleDeleteWitness(witness._id)}
+              >
                 <Icon>delete</Icon>&nbsp;delete
               </MDButton>
             </MDBox>
@@ -126,15 +100,7 @@ function Victim() {
         });
       });
     });
-    setVictims({ ...victims, rows: tempRows });
-  };
-
-  const handleCloseModal = () => setOpenModal(false);
-
-  const handlePicChange = (name) => {
-    picList.forEach((pic) => {
-      if (pic.employee.name === name) setVictimData({ ...victimData, picId: pic.employee._id });
-    });
+    setWitnesses({ ...witnesses, rows: tempArray });
   };
 
   const style = {
@@ -151,9 +117,9 @@ function Victim() {
   };
 
   useEffect(() => {
-    victimInit();
+    witnessInit();
     getPICList();
-    setVictimData({ ...victimData, incidentId });
+    setWitnessData({ ...witnessData, incidentId });
   }, []);
 
   return (
@@ -164,7 +130,7 @@ function Victim() {
             <Grid container spacing={3}>
               <Grid item xs={12} lg={6} xl={5}>
                 <MDTypography variant="h5" fontWeight="medium">
-                  Informasi Korban
+                  Informasi Saksi
                 </MDTypography>
               </Grid>
 
@@ -177,13 +143,13 @@ function Victim() {
                     color="dark"
                     onClick={() => setOpenModal(true)}
                   >
-                    Tambahkan Korban
+                    Tambahkan Saksi
                   </MDButton>
                 </MDBox>
               </MDBox>
             </Grid>
           </MDBox>
-          <DataTable table={victims} />
+          <DataTable table={witnesses} />
         </MDBox>
       </Card>
 
@@ -213,7 +179,7 @@ function Victim() {
               textAlign="center"
             >
               <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
-                Tambahkan Korban
+                Tambahkan Saksi
               </MDTypography>
             </MDBox>
             <MDBox component="form" role="form">
@@ -225,7 +191,7 @@ function Victim() {
                       label="Type Korban"
                       placeholder="ex: Bang Adnoh"
                       onChange={(e) =>
-                        setVictimData({ ...victimData, [e.target.name]: e.target.value })
+                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -237,7 +203,7 @@ function Victim() {
                       label="Nama Korban"
                       placeholder="ex: Bang Adnoh"
                       onChange={(e) =>
-                        setVictimData({ ...victimData, [e.target.name]: e.target.value })
+                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -250,7 +216,7 @@ function Victim() {
                       type="number"
                       placeholder="ex: 3244612446"
                       onChange={(e) =>
-                        setVictimData({ ...victimData, [e.target.name]: e.target.value })
+                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -258,11 +224,11 @@ function Victim() {
                 <Grid item xs={12} sm={6}>
                   <MDBox>
                     <FormField
-                      name="victimNrp"
+                      name="witnessNrp"
                       label="NRP Korban"
                       placeholder="ex: 3244612446"
                       onChange={(e) =>
-                        setVictimData({ ...victimData, [e.target.name]: e.target.value })
+                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -296,7 +262,7 @@ function Victim() {
                       name="vendorName"
                       placeholder="ex: ISS"
                       onChange={(e) =>
-                        setVictimData({ ...victimData, [e.target.name]: e.target.value })
+                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -310,8 +276,8 @@ function Victim() {
                       variant="gradient"
                       color="info"
                       size="small"
-                      disabled={!(victimData.type && victimData.name && victimData.KTP)}
-                      onClick={handleAddVictim}
+                      // disabled={!(victimData.type && victimData.name && victimData.ktp)}
+                      onClick={handleAddWitness}
                     >
                       Save
                     </MDButton>
@@ -335,4 +301,4 @@ function Victim() {
   );
 }
 
-export default Victim;
+export default Witness;

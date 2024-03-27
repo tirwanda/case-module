@@ -57,7 +57,7 @@ exports.getAllVictims = catchAsyncErrors(async (req, res, next) => {
 
 exports.getVictimById = catchAsyncErrors(async (req, res, next) => {
 	try {
-		const victimId = req.params.id;
+		const victimId = req.params.victimId;
 
 		const checkVictim = await Victim.findById(victimId).populate('pic');
 
