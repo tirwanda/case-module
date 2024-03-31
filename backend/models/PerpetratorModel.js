@@ -14,7 +14,7 @@ const perpetratorSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
-		addressKTP: {
+		ktpAddress: {
 			type: String,
 			default: '',
 		},
@@ -34,6 +34,11 @@ const perpetratorSchema = new mongoose.Schema(
 		vendorName: {
 			type: String,
 			default: '',
+		},
+		incident: {
+			type: mongoose.Types.ObjectId,
+			ref: 'Incident',
+			required: [true, 'Incident not found'],
 		},
 		createdAt: { type: Number, default: Date.now },
 		updatedAt: { type: Number, default: Date.now },

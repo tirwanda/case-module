@@ -13,22 +13,25 @@ import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Backdrop, Box, Fade, Icon, Modal } from "@mui/material";
 
-import dataTableWitness from "../../data/dataTableWitness";
 import { getAllPICArea } from "api/picAreaAPI";
-import { getWitnessByIncidentId, addWitness, deleteWitnessById } from "api/witnessAPI";
+import dataTablePerpetrator from "../../data/dataTablePerpetrator";
+import {
+  deletePerpetratorById,
+  addPerpetrator,
+  getPerpetratorsByIncidentId,
+} from "api/perpetratorAPI";
 
-function Witness() {
-  const [witnesses, setWitnesses] = useState(dataTableWitness);
+function Perpetrator() {
+  const [perpetrators, setPerpetrators] = useState(dataTablePerpetrator);
   const [openModal, setOpenModal] = useState(false);
   const [picList, setPicList] = useState([]);
   const [picNameList, setPicNameList] = useState([]);
-  const [witnessData, setWitnessData] = useState({
+  const [perpetratorData, setPerpetratorData] = useState({
     type: "",
     name: "",
     KTP: "",
-    witnessNrp: "",
+    perpetratorNrp: "",
     picId: "",
-    picName: "",
     picDepartment: "",
     vendorName: "",
     incidentId: "",
@@ -49,37 +52,38 @@ function Witness() {
 
   const handlePicChange = (name) => {
     picList.forEach((pic) => {
-      if (pic.employee.name === name) setWitnessData({ ...witnessData, picId: pic.employee._id });
+      if (pic.employee.name === name)
+        setPerpetratorData({ ...perpetratorData, picId: pic.employee._id });
     });
   };
 
-  const handleDeleteWitness = async (witnessId) => {
-    await deleteWitnessById(witnessId).then((response) => {
-      witnessInit();
+  const handleDeletePerpetrator = async (perpetratorId) => {
+    await deletePerpetratorById(perpetratorId).then((response) => {
+      perpetratorInit();
     });
   };
 
-  const handleAddWitness = async () => {
-    await addWitness(witnessData).then((response) => {
-      witnessInit();
+  const handleAddPerpetrator = async () => {
+    await addPerpetrator(perpetratorData).then((response) => {
+      perpetratorInit();
       handleCloseModal();
     });
   };
 
   const handleCloseModal = () => setOpenModal(false);
 
-  const witnessInit = async () => {
+  const perpetratorInit = async () => {
     const tempArray = [];
-    await getWitnessByIncidentId(incidentId).then((response) => {
-      response.data.witnesses?.forEach((witness) => {
+    await getPerpetratorsByIncidentId(incidentId).then((response) => {
+      response.data.perpetrators?.forEach((perpetrator) => {
         tempArray.push({
-          type: witness.type,
-          name: witness.name,
-          ktp: witness.KTP,
-          nrpwitness: witness.witnessNrp,
-          nrpPic: witness.pic.nrp,
-          picName: witness.pic.name,
-          picDepartment: witness.pic.department,
+          type: perpetrator.type,
+          name: perpetrator.name,
+          ktp: perpetrator.KTP,
+          nrpPerpetrator: perpetrator.perpetratorNrp,
+          nrpPic: perpetrator.pic.nrp,
+          picName: perpetrator.pic.name,
+          picDepartment: perpetrator.pic.department,
           actions: (
             <MDBox
               display="flex"
@@ -91,7 +95,7 @@ function Witness() {
               <MDButton
                 variant="text"
                 color="error"
-                onClick={() => handleDeleteWitness(witness._id)}
+                onClick={() => handleDeletePerpetrator(perpetrator._id)}
               >
                 <Icon>delete</Icon>&nbsp;delete
               </MDButton>
@@ -100,7 +104,7 @@ function Witness() {
         });
       });
     });
-    setWitnesses({ ...witnesses, rows: tempArray });
+    setPerpetrators({ ...perpetrators, rows: tempArray });
   };
 
   const style = {
@@ -117,9 +121,9 @@ function Witness() {
   };
 
   useEffect(() => {
-    witnessInit();
+    perpetratorInit();
     getPICList();
-    setWitnessData({ ...witnessData, incidentId });
+    setPerpetratorData({ ...perpetratorData, incidentId });
   }, []);
 
   return (
@@ -130,7 +134,7 @@ function Witness() {
             <Grid container spacing={3}>
               <Grid item xs={12} lg={6} xl={5}>
                 <MDTypography variant="h5" fontWeight="medium">
-                  Informasi Saksi
+                  Informasi Pelaku
                 </MDTypography>
               </Grid>
 
@@ -143,17 +147,17 @@ function Witness() {
                     color="dark"
                     onClick={() => setOpenModal(true)}
                   >
-                    Tambahkan Saksi
+                    Tambahkan Pelaku
                   </MDButton>
                 </MDBox>
               </MDBox>
             </Grid>
           </MDBox>
-          <DataTable table={witnesses} />
+          <DataTable table={perpetrators} />
         </MDBox>
       </Card>
 
-      {/* Open Modal Update Employee */}
+      {/* Open Modal Add Perpetrator */}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -179,7 +183,7 @@ function Witness() {
               textAlign="center"
             >
               <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
-                Tambahkan Saksi
+                Tambahkan Pelaku
               </MDTypography>
             </MDBox>
             <MDBox component="form" role="form">
@@ -188,10 +192,10 @@ function Witness() {
                   <MDBox>
                     <FormField
                       name="type"
-                      label="Type Saksi"
+                      label="Type Pelaku"
                       placeholder="ex: Bang Adnoh"
                       onChange={(e) =>
-                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
+                        setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -200,10 +204,10 @@ function Witness() {
                   <MDBox>
                     <FormField
                       name="name"
-                      label="Nama Saksi"
+                      label="Nama Pelaku"
                       placeholder="ex: Bang Adnoh"
                       onChange={(e) =>
-                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
+                        setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -212,11 +216,11 @@ function Witness() {
                   <MDBox>
                     <FormField
                       name="KTP"
-                      label="KTP Saksi"
+                      label="KTP Pelaku"
                       type="number"
                       placeholder="ex: 3244612446"
                       onChange={(e) =>
-                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
+                        setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -224,11 +228,11 @@ function Witness() {
                 <Grid item xs={12} sm={6}>
                   <MDBox>
                     <FormField
-                      name="witnessNrp"
-                      label="NRP Saksi"
+                      name="perpetratorNrp"
+                      label="NRP Pelaku"
                       placeholder="ex: 3244612446"
                       onChange={(e) =>
-                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
+                        setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -262,7 +266,7 @@ function Witness() {
                       name="vendorName"
                       placeholder="ex: ISS"
                       onChange={(e) =>
-                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
+                        setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
                       }
                     />
                   </MDBox>
@@ -277,7 +281,7 @@ function Witness() {
                       color="info"
                       size="small"
                       // disabled={!(victimData.type && victimData.name && victimData.ktp)}
-                      onClick={handleAddWitness}
+                      onClick={handleAddPerpetrator}
                     >
                       Save
                     </MDButton>
@@ -301,4 +305,4 @@ function Witness() {
   );
 }
 
-export default Witness;
+export default Perpetrator;

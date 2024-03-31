@@ -1,5 +1,4 @@
 const Witness = require('../../models/WitnessModel.js');
-const PICArea = require('../../models/PICAreaModel.js');
 const Employee = require('../../models/EmployeeModel.js');
 const Incident = require('../../models/IncidentModel.js');
 const ErrorHandler = require('../../utils/ErrorHandler.js');
