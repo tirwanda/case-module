@@ -26,6 +26,7 @@ const incident = require('./routes/web/incidentRoutes');
 const victim = require('./routes/web/victimRoutes');
 const witness = require('./routes/web/witnessRoutes');
 const perpetrator = require('./routes/web/perpetratorRoutes');
+const callingLetter = require('./routes/web/callingLetterRoutes');
 
 app.use('/api/v1', user);
 app.use('/api/v1', employee);
@@ -34,6 +35,7 @@ app.use('/api/v1', incident);
 app.use('/api/v1', victim);
 app.use('/api/v1', witness);
 app.use('/api/v1', perpetrator);
+app.use('/api/v1', callingLetter);
 
 // it's for errorHandeling
 app.use(ErrorHandler);
