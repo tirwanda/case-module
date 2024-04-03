@@ -58,6 +58,14 @@ const callingLetterSchema = new mongoose.Schema(
 			type: String,
 			default: 'Created',
 		},
+		attachment: {
+			type: String,
+			default: '',
+		},
+		attachmentName: {
+			type: String,
+			default: '',
+		},
 		createdAt: { type: Number, default: Date.now },
 		updatedAt: { type: Number, default: Date.now },
 	},

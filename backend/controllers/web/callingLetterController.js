@@ -18,6 +18,8 @@ exports.createCallingLetter = catchAsyncErrors(async (req, res, next) => {
 			purposes,
 			incidentId,
 			vendorName,
+			attachment,
+			attachmentName,
 		} = req.body;
 		const employe = await Employee.findById(picId);
 		const caller = await Employee.findById(callerId);
@@ -47,6 +49,8 @@ exports.createCallingLetter = catchAsyncErrors(async (req, res, next) => {
 			incident: checkIncident,
 			vendorName,
 			nrp,
+			attachment,
+			attachmentName,
 		}).then((callingLetter) => callingLetter.populate('pic'));
 
 		res.status(201).json({
@@ -132,6 +136,8 @@ exports.updateCallingLetter = catchAsyncErrors(async (req, res, next) => {
 			status,
 			vendorName,
 			nrp,
+			attachment,
+			attachmentName,
 		} = req.body;
 
 		const callingLetter = await CallingLetter.findById(callingLetterId);
@@ -161,6 +167,8 @@ exports.updateCallingLetter = catchAsyncErrors(async (req, res, next) => {
 		callingLetter.status = status;
 		callingLetter.vendorName = vendorName;
 		callingLetter.nrp = nrp;
+		callingLetter.attachment = attachment;
+		callingLetter.attachmentName = attachmentName;
 
 		await callingLetter.save();
 

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { storage } from "firebase.js";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { v4 } from "uuid";
 
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
@@ -13,12 +14,17 @@ import FormField from "../FormField";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
 import Autocomplete from "@mui/material/Autocomplete";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Backdrop, Box, Fade, Icon, Modal } from "@mui/material";
+import Button from "@mui/material/Button";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
+import PageviewOutlinedIcon from "@mui/icons-material/PageviewOutlined";
 
 import { getAllPICArea } from "api/picAreaAPI";
 import dataTableCallingLetter from "../../data/dataTableCallingLetter";
@@ -36,6 +42,8 @@ function CallingLetter() {
   const [callerList, setCallerList] = useState([]);
   const [picNameList, setPicNameList] = useState([]);
   const [callerNameList, setCallerNameList] = useState([]);
+  const [dataFile, setDataFile] = useState(null);
+  const [fileName, setFileName] = useState("");
   const [callingLetterData, setCallingLetterData] = useState({
     type: "",
     name: "",
@@ -49,6 +57,8 @@ function CallingLetter() {
     incidentId: "",
     vendorName: "",
     incidentId: "",
+    attachmentName: "",
+    attachment: "",
   });
 
   const { incidentId } = useParams();
@@ -80,18 +90,32 @@ function CallingLetter() {
     });
   };
 
-  const handleDeleteCallingLetter = async (callingLetterId) => {
+  const handleDeleteCallingLetter = async (callingLetterId, attachment) => {
     await deleteCallingLetterById(callingLetterId).then((response) => {
       callinLetterInit();
     });
+    await deleteObject(ref(storage, attachment))
+      .then(() => {})
+      .catch((error) => {
+        console.error("Error deleting file:", error);
+      });
   };
 
   const handleAddCallingLetter = async () => {
-    console.log("Data Pemanggilan: ", callingLetterData);
-    await addCallingLetter(callingLetterData).then((response) => {
-      callinLetterInit();
-      handleCloseModal();
+    const storageRef = ref(storage, `Calling-Letter/${fileName}.pdf`);
+    await uploadBytes(storageRef, dataFile).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then(async (downloadURL) => {
+        await addCallingLetter({
+          ...callingLetterData,
+          attachment: downloadURL,
+          attachmentName: fileName,
+        }).then((response) => {
+          callinLetterInit();
+          handleCloseModal();
+        });
+      });
     });
+
     setCallingLetterData({
       type: "",
       name: "",
@@ -105,6 +129,8 @@ function CallingLetter() {
       incidentId: "",
       vendorName: "",
       incidentId: incidentId,
+      attachment: "",
+      attachmentName: "",
     });
   };
 
@@ -140,6 +166,19 @@ function CallingLetter() {
     }
   };
 
+  const uploadCallingLetter = async (data) => {
+    if (data === null) {
+      return;
+    }
+    if (data.type !== "application/pdf") {
+      alert("Please upload a PDF file");
+      return;
+    }
+    setDataFile(data);
+
+    document.getElementById("fileInput").value = null;
+  };
+
   const callinLetterInit = async () => {
     const tempArray = [];
     await getCallingLetterByIncidentId(incidentId).then((response) => {
@@ -151,6 +190,14 @@ function CallingLetter() {
           callerName: callingLetter.caller.name,
           invitationDate: new Date(callingLetter.invitationDate).toLocaleDateString(),
           status: callingLetter.status,
+          attachment: (
+            <Link href={callingLetter.attachment} target="_blank">
+              <MDButton variant="text" color="dark">
+                <PageviewOutlinedIcon />
+                &nbsp;view
+              </MDButton>
+            </Link>
+          ),
           actions: (
             <MDBox
               display="flex"
@@ -162,7 +209,9 @@ function CallingLetter() {
               <MDButton
                 variant="text"
                 color="error"
-                onClick={() => handleDeleteCallingLetter(callingLetter._id)}
+                onClick={() =>
+                  handleDeleteCallingLetter(callingLetter._id, callingLetter.attachment)
+                }
               >
                 <Icon>delete</Icon>&nbsp;delete
               </MDButton>
@@ -186,6 +235,18 @@ function CallingLetter() {
     p: 4,
     borderRadius: 2,
   };
+
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(100%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
 
   useEffect(() => {
     callinLetterInit();
@@ -212,7 +273,12 @@ function CallingLetter() {
                     role={undefined}
                     variant="contained"
                     color="dark"
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                      setOpenModal(true);
+                      document.getElementById("fileInput").value = null;
+                      setDataFile(null);
+                      setFileName(`${v4()}`);
+                    }}
                   >
                     Tambah Surat
                   </MDButton>
@@ -298,6 +364,7 @@ function CallingLetter() {
                         setCallingLetterData({
                           ...callingLetterData,
                           [e.target.name]: e.target.value,
+                          attachmentName: fileName,
                         })
                       }
                     />
@@ -314,6 +381,7 @@ function CallingLetter() {
                         setCallingLetterData({
                           ...callingLetterData,
                           [e.target.name]: e.target.value,
+                          attachmentName: fileName,
                         })
                       }
                     />
@@ -368,7 +436,11 @@ function CallingLetter() {
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DateTimePicker
                         label="Tanggal Pemanggilan"
-                        value={new Date()}
+                        value={
+                          callingLetterData.invitationDate
+                            ? new Date(callingLetterData.invitationDate)
+                            : new Date()
+                        }
                         onChange={(newValue) =>
                           setCallingLetterData({
                             ...callingLetterData,
@@ -443,6 +515,38 @@ function CallingLetter() {
                     />
                   </MDBox>
                 </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  {dataFile && (
+                    <MDBox mr={2} mt={3}>
+                      <MDInput
+                        name="dataFile"
+                        type="text"
+                        variant="standard"
+                        fullWidth
+                        disabled
+                        value={dataFile.name || ""}
+                      />
+                    </MDBox>
+                  )}
+                  <MDBox>
+                    <Button
+                      component="label"
+                      role={undefined}
+                      variant="contained"
+                      tabIndex={-1}
+                      color="primary"
+                      startIcon={<CloudUploadIcon color="white" />}
+                    >
+                      <p style={{ color: "white" }}>Upload Surat </p>
+                      <VisuallyHiddenInput
+                        id="fileInput"
+                        type="file"
+                        onChange={(event) => uploadCallingLetter(event.target.files[0])}
+                      />
+                    </Button>
+                  </MDBox>
+                </Grid>
               </Grid>
               <Grid container spacing={3}>
                 <MDBox mt={6} ml="auto" display="flex">
@@ -460,7 +564,8 @@ function CallingLetter() {
                           callingLetterData.callerId &&
                           callingLetterData.location &&
                           callingLetterData.reason &&
-                          callingLetterData.purposes
+                          callingLetterData.purposes &&
+                          dataFile
                         )
                       }
                       onClick={handleAddCallingLetter}
