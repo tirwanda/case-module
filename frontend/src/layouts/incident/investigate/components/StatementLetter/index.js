@@ -5,6 +5,16 @@ import { storage } from "firebase.js";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { v4 } from "uuid";
 
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import { styled } from "@mui/material/styles";
+import { Backdrop, Box, Fade, Icon, Modal } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import PageviewOutlinedIcon from "@mui/icons-material/PageviewOutlined";
+
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
@@ -12,48 +22,27 @@ import DataTable from "examples/Tables/DataTable";
 import MDInput from "components/MDInput";
 import FormField from "../FormField";
 
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import Autocomplete from "@mui/material/Autocomplete";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Backdrop, Box, Fade, Icon, Modal } from "@mui/material";
-import Button from "@mui/material/Button";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { styled } from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
-import PageviewOutlinedIcon from "@mui/icons-material/PageviewOutlined";
-
+import dataTableStatementLetter from "../../data/dataTableStatementLetter";
 import { getAllPICArea } from "api/picAreaAPI";
-import dataTableCallingLetter from "../../data/dataTableCallingLetter";
 import {
-  deleteCallingLetterById,
-  addCallingLetter,
-  getCallingLetterByIncidentId,
-} from "api/callingLetterAPI";
+  addStatementLetter,
+  getStatementLettersByIncidentId,
+  deleteStatementLetterById,
+} from "api/statementLetterAPI";
 
-function CallingLetter() {
-  const [callingLetters, setCallingLetters] = useState(dataTableCallingLetter);
+function StatementLetter() {
+  const [statementLetters, setStatementLetters] = useState(dataTableStatementLetter);
   const [openModal, setOpenModal] = useState(false);
   const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
-  const [picList, setPicList] = useState([]);
-  const [callerList, setCallerList] = useState([]);
   const [picNameList, setPicNameList] = useState([]);
-  const [callerNameList, setCallerNameList] = useState([]);
+  const [picList, setPicList] = useState([]);
   const [dataFile, setDataFile] = useState(null);
   const [fileName, setFileName] = useState("");
-  const [callingLetterData, setCallingLetterData] = useState({
+  const [statementLetterData, setStatementLetterData] = useState({
     type: "",
     name: "",
     nrp: "",
     picId: "",
-    callerId: "",
-    invitationDate: "",
-    location: "",
-    reason: "",
-    purposes: "",
     incidentId: "",
     vendorName: "",
     incidentId: "",
@@ -63,82 +52,10 @@ function CallingLetter() {
 
   const { incidentId } = useParams();
 
-  const getEmployeeList = async () => {
-    const tempArray = [];
-    await getAllPICArea().then((response) => {
-      setPicList(response.data.PICAreas);
-      setCallerList(response.data.PICAreas);
-      response.data.PICAreas.forEach((pic) => {
-        tempArray.push(pic.employee.name);
-      });
-    });
-    setPicNameList(tempArray);
-    setCallerNameList(tempArray);
-  };
-
-  const handlePicChange = (name) => {
-    picList.forEach((pic) => {
-      if (pic.employee.name === name)
-        setCallingLetterData({ ...callingLetterData, picId: pic.employee._id });
-    });
-  };
-
-  const handleCallerChange = (name) => {
-    callerList.forEach((caller) => {
-      if (caller.employee.name === name)
-        setCallingLetterData({ ...callingLetterData, callerId: caller.employee._id });
-    });
-  };
-
-  const handleDeleteCallingLetter = async (callingLetterId, attachment) => {
-    await deleteCallingLetterById(callingLetterId).then((response) => {
-      callinLetterInit();
-    });
-    await deleteObject(ref(storage, attachment))
-      .then(() => {})
-      .catch((error) => {
-        console.error("Error deleting file:", error);
-      });
-  };
-
-  const handleAddCallingLetter = async () => {
-    const storageRef = ref(storage, `Calling-Letter/${fileName}.pdf`);
-    await uploadBytes(storageRef, dataFile).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then(async (downloadURL) => {
-        await addCallingLetter({
-          ...callingLetterData,
-          attachment: downloadURL,
-          attachmentName: fileName,
-        }).then((response) => {
-          callinLetterInit();
-          handleCloseModal();
-        });
-      });
-    });
-
-    setCallingLetterData({
-      type: "",
-      name: "",
-      nrp: "",
-      picId: "",
-      callerId: "",
-      invitationDate: "",
-      location: "",
-      reason: "",
-      purposes: "",
-      incidentId: "",
-      vendorName: "",
-      incidentId: incidentId,
-      attachment: "",
-      attachmentName: "",
-    });
-  };
-
-  const handleCloseModal = () => setOpenModal(false);
   const handleDownloadTemplate = async () => {
     try {
       // Path to the template file in Firebase Storage
-      const templatePath = "template/Surat-Pemanggilan.docx"; // Change this to the path of your template file
+      const templatePath = "template/Surat-Pernyataan.docx"; // Change this to the path of your template file
 
       // Create a reference to the template file
       const storageRef = ref(storage, templatePath);
@@ -151,7 +68,7 @@ function CallingLetter() {
       link.href = downloadURL;
 
       // Set the download attribute to specify the file name
-      link.setAttribute("download", "Surat-Pemanggilan.docx"); // Change "template.pdf" to the desired file name
+      link.setAttribute("download", "Surat-Pernyataan.docx"); // Change "template.pdf" to the desired file name
 
       // Append the link to the document body
       document.body.appendChild(link);
@@ -166,32 +83,38 @@ function CallingLetter() {
     }
   };
 
-  const uploadCallingLetter = async (data) => {
-    if (data === null) {
-      return;
-    }
-    if (data.type !== "application/pdf") {
-      alert("Please upload a PDF file");
-      return;
-    }
-    setDataFile(data);
+  const handleCloseModal = () => setOpenModal(false);
 
-    document.getElementById("fileInput").value = null;
+  const handlePicChange = (name) => {
+    picList.forEach((pic) => {
+      if (pic.employee.name === name)
+        setStatementLetterData({ ...statementLetterData, picId: pic.employee._id });
+    });
   };
 
-  const callinLetterInit = async () => {
+  const handleDeleteStatemetLetter = async (statementLetterId, attachment) => {
+    await deleteStatementLetterById(statementLetterId).then((response) => {
+      statementLetterInit();
+    });
+    await deleteObject(ref(storage, attachment))
+      .then(() => {})
+      .catch((error) => {
+        console.error("Error deleting file:", error);
+      });
+  };
+
+  const statementLetterInit = async () => {
     const tempArray = [];
-    await getCallingLetterByIncidentId(incidentId).then((response) => {
-      response.data.callingLetters?.forEach((callingLetter) => {
+    await getStatementLettersByIncidentId(incidentId).then((response) => {
+      response.data.statementLetters?.forEach((statemetLetter) => {
         tempArray.push({
-          name: callingLetter.name,
-          picName: callingLetter.pic.name,
-          picDepartment: callingLetter.pic.department,
-          callerName: callingLetter.caller.name,
-          invitationDate: new Date(callingLetter.invitationDate).toLocaleDateString(),
-          status: callingLetter.status,
+          name: statemetLetter.name,
+          picName: statemetLetter.pic.name,
+          picDepartment: statemetLetter.pic.department,
+          status: statemetLetter.status,
+          nrp: statemetLetter.nrp,
           attachment: (
-            <Link href={callingLetter.attachment} target="_blank">
+            <Link href={statemetLetter.attachment} target="_blank">
               <MDButton variant="text" color="dark">
                 <PageviewOutlinedIcon />
                 &nbsp;view
@@ -210,7 +133,7 @@ function CallingLetter() {
                 variant="text"
                 color="error"
                 onClick={() =>
-                  handleDeleteCallingLetter(callingLetter._id, callingLetter.attachment)
+                  handleDeleteStatemetLetter(statemetLetter._id, statemetLetter.attachment)
                 }
               >
                 <Icon>delete</Icon>&nbsp;delete
@@ -220,7 +143,60 @@ function CallingLetter() {
         });
       });
     });
-    setCallingLetters({ ...callingLetters, rows: tempArray });
+    setStatementLetters({ ...statementLetters, rows: tempArray });
+  };
+
+  const handleAddStatementLetter = async () => {
+    const storageRef = ref(storage, `Statement-Letter/${fileName}.pdf`);
+    await uploadBytes(storageRef, dataFile).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then(async (downloadURL) => {
+        await addStatementLetter({
+          ...statementLetterData,
+          attachment: downloadURL,
+          incidentId: incidentId,
+          attachmentName: fileName,
+        }).then((response) => {
+          statementLetterInit();
+          handleCloseModal();
+        });
+      });
+    });
+
+    setStatementLetterData({
+      type: "",
+      name: "",
+      nrp: "",
+      picId: "",
+      incidentId: incidentId,
+      vendorName: "",
+      incidentId: "",
+      attachmentName: "",
+      attachment: "",
+    });
+  };
+
+  const getEmployeeList = async () => {
+    const tempArray = [];
+    await getAllPICArea().then((response) => {
+      setPicList(response.data.PICAreas);
+      response.data.PICAreas.forEach((pic) => {
+        tempArray.push(pic.employee.name);
+      });
+    });
+    setPicNameList(tempArray);
+  };
+
+  const uploadStatementLetter = async (data) => {
+    if (data === null) {
+      return;
+    }
+    if (data.type !== "application/pdf") {
+      alert("Please upload a PDF file");
+      return;
+    }
+    setDataFile(data);
+
+    document.getElementById("fileInput").value = null;
   };
 
   const style = {
@@ -249,9 +225,9 @@ function CallingLetter() {
   });
 
   useEffect(() => {
-    callinLetterInit();
+    statementLetterInit();
     getEmployeeList();
-    setCallingLetterData({ ...callingLetterData, incidentId });
+    setStatementLetterData({ ...statementLetterData, incidentId });
   }, []);
 
   return (
@@ -262,7 +238,7 @@ function CallingLetter() {
             <Grid container spacing={3}>
               <Grid item xs={12} lg={6} xl={5}>
                 <MDTypography variant="h5" fontWeight="medium">
-                  Surat Pemanggilan
+                  Surat Pernyataan
                 </MDTypography>
               </Grid>
 
@@ -297,11 +273,11 @@ function CallingLetter() {
               </MDBox>
             </Grid>
           </MDBox>
-          <DataTable table={callingLetters} />
+          <DataTable table={statementLetters} />
         </MDBox>
       </Card>
 
-      {/* Open Modal Add Calling Letter */}
+      {/* Open Modal Add Statement Letter */}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -327,7 +303,7 @@ function CallingLetter() {
               textAlign="center"
             >
               <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
-                Tambahkan Surat Pemanggilan
+                Tambahkan Surat Pernyataan
               </MDTypography>
             </MDBox>
             <MDBox component="form" role="form">
@@ -347,7 +323,7 @@ function CallingLetter() {
                     </MDBox>
                     <Autocomplete
                       onChange={(event, value) => {
-                        setCallingLetterData({ ...callingLetterData, type: value });
+                        setStatementLetterData({ ...statementLetterData, type: value });
                       }}
                       options={typeList}
                       renderInput={(params) => <MDInput {...params} variant="standard" />}
@@ -358,11 +334,11 @@ function CallingLetter() {
                   <MDBox>
                     <FormField
                       name="name"
-                      label="Nama Terpanggil"
+                      label="Nama Pembuat Surat"
                       placeholder="ex: Bang Adnoh"
                       onChange={(e) =>
-                        setCallingLetterData({
-                          ...callingLetterData,
+                        setStatementLetterData({
+                          ...statementLetterData,
                           [e.target.name]: e.target.value,
                           attachmentName: fileName,
                         })
@@ -376,10 +352,11 @@ function CallingLetter() {
                       name="nrp"
                       label="NRP Terpanggil"
                       placeholder="ex: 34563"
-                      disabled={callingLetterData.type === "Eksternal AHM"}
+                      type="number"
+                      disabled={statementLetterData.type === "Eksternal AHM"}
                       onChange={(e) =>
-                        setCallingLetterData({
-                          ...callingLetterData,
+                        setStatementLetterData({
+                          ...statementLetterData,
                           [e.target.name]: e.target.value,
                           attachmentName: fileName,
                         })
@@ -409,106 +386,17 @@ function CallingLetter() {
                     />
                   </MDBox>
                 </Grid>
-                <Grid item xs={12} sm={6} style={{ paddingTop: "8px" }}>
-                  <MDBox mb={3}>
-                    <MDBox display="inline-block">
-                      <MDTypography
-                        component="label"
-                        variant="button"
-                        fontWeight="regular"
-                        color="text"
-                        textTransform="capitalize"
-                      >
-                        Nama Pemanggil
-                      </MDTypography>
-                    </MDBox>
-                    <Autocomplete
-                      onChange={(event, value) => {
-                        handleCallerChange(value);
-                      }}
-                      options={callerNameList}
-                      renderInput={(params) => <MDInput {...params} variant="standard" />}
-                    />
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} sm={6} mb={1}>
-                  <MDBox>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <DateTimePicker
-                        label="Tanggal Pemanggilan"
-                        value={
-                          callingLetterData.invitationDate
-                            ? new Date(callingLetterData.invitationDate)
-                            : new Date()
-                        }
-                        onChange={(newValue) =>
-                          setCallingLetterData({
-                            ...callingLetterData,
-                            invitationDate: newValue.getTime(),
-                          })
-                        }
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-                    </LocalizationProvider>
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <MDBox>
-                    <FormField
-                      name="location"
-                      label="Lokasi Pemanggilan"
-                      placeholder="ex: Pos Komando - Plant 1"
-                      onChange={(e) =>
-                        setCallingLetterData({
-                          ...callingLetterData,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
-                    />
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <MDBox>
-                    <FormField
-                      label="Alasan Pemanggilan"
-                      name="reason"
-                      multiline
-                      placeholder="ex: Karna yang bersangkutan di sebutkan dalam laporan kejadian"
-                      onChange={(e) =>
-                        setCallingLetterData({
-                          ...callingLetterData,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
-                    />
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <MDBox>
-                    <FormField
-                      label="Keperluaan Pemanggilan"
-                      name="purposes"
-                      multiline
-                      placeholder="ex: Diminta untuk memberikan keterangan terkait kejadian yang terjadi"
-                      onChange={(e) =>
-                        setCallingLetterData({
-                          ...callingLetterData,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
-                    />
-                  </MDBox>
-                </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <MDBox>
                     <FormField
                       label="Nama Vendor"
                       name="vendorName"
                       placeholder="ex: ISS"
-                      disabled={callingLetterData.type === "Internal AHM"}
+                      disabled={statementLetterData.type === "Internal AHM"}
                       onChange={(e) =>
-                        setCallingLetterData({
-                          ...callingLetterData,
+                        setStatementLetterData({
+                          ...statementLetterData,
                           [e.target.name]: e.target.value,
                         })
                       }
@@ -538,11 +426,11 @@ function CallingLetter() {
                       color="primary"
                       startIcon={<CloudUploadIcon color="white" />}
                     >
-                      <p style={{ color: "white" }}>Upload Surat </p>
+                      <p style={{ color: "white" }}>{dataFile ? "Edit Surat" : "Upload Surat"}</p>
                       <VisuallyHiddenInput
                         id="fileInput"
                         type="file"
-                        onChange={(event) => uploadCallingLetter(event.target.files[0])}
+                        onChange={(event) => uploadStatementLetter(event.target.files[0])}
                       />
                     </Button>
                   </MDBox>
@@ -558,17 +446,13 @@ function CallingLetter() {
                       size="small"
                       disabled={
                         !(
-                          callingLetterData.type &&
-                          callingLetterData.name &&
-                          callingLetterData.picId &&
-                          callingLetterData.callerId &&
-                          callingLetterData.location &&
-                          callingLetterData.reason &&
-                          callingLetterData.purposes &&
+                          statementLetterData.type &&
+                          statementLetterData.name &&
+                          statementLetterData.picId &&
                           dataFile
                         )
                       }
-                      onClick={handleAddCallingLetter}
+                      onClick={handleAddStatementLetter}
                     >
                       Save
                     </MDButton>
@@ -592,4 +476,4 @@ function CallingLetter() {
   );
 }
 
-export default CallingLetter;
+export default StatementLetter;

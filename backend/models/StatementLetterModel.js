@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const callingLetterSchema = new mongoose.Schema(
+const statementLetterSchema = new mongoose.Schema(
 	{
 		type: {
 			type: String,
@@ -8,11 +8,14 @@ const callingLetterSchema = new mongoose.Schema(
 		},
 		name: {
 			type: String,
-			required: [true, 'Please enter name of summons destination'],
+			required: [
+				true,
+				'Please enter name of the maker of the statement letter',
+			],
 		},
 		nrp: {
 			type: String,
-			required: [true, 'Please enter NRP'],
+			default: '',
 		},
 		idVendor: {
 			type: String,
@@ -26,28 +29,6 @@ const callingLetterSchema = new mongoose.Schema(
 			type: mongoose.Types.ObjectId,
 			ref: 'Employe',
 			required: [true, 'Employee not found'],
-		},
-		caller: {
-			type: mongoose.Types.ObjectId,
-			ref: 'Employe',
-			required: [true, 'Employee not found'],
-		},
-		invitationDate: {
-			type: Number,
-			required: [true, 'Please enter invitation date'],
-			default: Date.now,
-		},
-		location: {
-			type: String,
-			required: [true, 'Please enter location'],
-		},
-		reason: {
-			type: String,
-			required: [true, 'Please enter reason'],
-		},
-		purposes: {
-			type: String,
-			required: [true, 'Please enter purpose'],
 		},
 		incident: {
 			type: mongoose.Types.ObjectId,
@@ -72,9 +53,9 @@ const callingLetterSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-callingLetterSchema.pre('updateOne', function (next) {
+statementLetterSchema.pre('updateOne', function (next) {
 	this.update({}, { $set: { updatedAt: Date.now() } });
 	next();
 });
 
-module.exports = mongoose.model('Calling_Letter', callingLetterSchema);
+module.exports = mongoose.model('Statement_Letter', statementLetterSchema);
