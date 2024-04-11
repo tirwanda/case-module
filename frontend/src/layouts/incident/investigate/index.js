@@ -24,6 +24,7 @@ import Witness from "./components/Witness";
 import Perpetrator from "./components/Perpetrator";
 import CallingLetter from "./components/CallingLetter";
 import StatementLetter from "./components/StatementLetter";
+import Bap from "./components/Bap";
 
 function Investigate() {
   const [incidentDetail, setIncidentDetail] = useState({});
@@ -78,6 +79,9 @@ function Investigate() {
                   </Grid>
                   <Grid item xs={12}>
                     <StatementLetter />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Bap />
                   </Grid>
                   <Grid item xs={12}>
                     <ReportVerification incidentInfo={incidentDetail} />
