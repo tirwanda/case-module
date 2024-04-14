@@ -30,11 +30,11 @@ import dataTableEvidence from "../investigate/data/dataTableEvidence";
 import { Divider } from "@mui/material";
 import VictimDetail from "./components/VictimDetail";
 import WitnessDetail from "./components/WitnessDetail";
+import PerpetratorDetail from "./components/PerpetratorDetail";
 
 function ViewIncident() {
   const [evidences, setEvidences] = useState(dataTableEvidence);
   const [incidentData, setIncidentData] = useState({});
-  const [incidentPicture, setIncidentPicture] = useState([]);
   const [cleanHTML, setCleanHTML] = useState("");
   const { incidentId } = useParams();
 
@@ -42,7 +42,6 @@ function ViewIncident() {
     await getIncident(incidentId).then((response) => {
       setCleanHTML(DOMPurify.sanitize(response.data.incident.chronology));
       setIncidentData(response.data.incident);
-      setIncidentPicture(response.data.incident.incidentPicture);
       setEvidences({
         ...evidences,
         rows: response.data.incident.evidences.map((evidence, index) => ({
@@ -126,7 +125,11 @@ function ViewIncident() {
             <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
 
             <VictimDetail />
+            <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
             <WitnessDetail />
+            <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
+            <PerpetratorDetail />
+            <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
           </MDBox>
         </Card>
       </MDBox>
