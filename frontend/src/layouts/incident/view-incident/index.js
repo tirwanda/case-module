@@ -29,6 +29,7 @@ import DOMPurify from "dompurify";
 import dataTableEvidence from "../investigate/data/dataTableEvidence";
 import { Divider } from "@mui/material";
 import VictimDetail from "./components/VictimDetail";
+import WitnessDetail from "./components/WitnessDetail";
 
 function ViewIncident() {
   const [evidences, setEvidences] = useState(dataTableEvidence);
@@ -125,6 +126,7 @@ function ViewIncident() {
             <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
 
             <VictimDetail />
+            <WitnessDetail />
           </MDBox>
         </Card>
       </MDBox>
