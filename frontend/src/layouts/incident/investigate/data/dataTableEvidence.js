@@ -1,4 +1,4 @@
-const dataTableData = {
+const dataTableEvidence = {
   columns: [
     { Header: "No", accessor: "no", width: "15%" },
     { Header: "Evidence Name", accessor: "evidenceName", width: "40%" },
@@ -8,4 +8,4 @@ const dataTableData = {
   rows: [],
 };
 
-export default dataTableData;
+export default dataTableEvidence;
