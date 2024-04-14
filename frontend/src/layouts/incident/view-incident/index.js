@@ -31,6 +31,7 @@ import { Divider } from "@mui/material";
 import VictimDetail from "./components/VictimDetail";
 import WitnessDetail from "./components/WitnessDetail";
 import PerpetratorDetail from "./components/PerpetratorDetail";
+import CallingLetterDetail from "./components/CallingLetterDetail";
 
 function ViewIncident() {
   const [evidences, setEvidences] = useState(dataTableEvidence);
@@ -130,6 +131,7 @@ function ViewIncident() {
             <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
             <PerpetratorDetail />
             <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
+            <CallingLetterDetail />
           </MDBox>
         </Card>
       </MDBox>

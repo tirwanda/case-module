@@ -12,7 +12,7 @@ const callingLetterSchema = new mongoose.Schema(
 		},
 		nrp: {
 			type: String,
-			required: [true, 'Please enter NRP'],
+			default: '',
 		},
 		idVendor: {
 			type: String,
