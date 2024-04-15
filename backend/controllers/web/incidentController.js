@@ -265,7 +265,8 @@ exports.updateIncidentByKaru = catchAsyncErrors(async (req, res, next) => {
 			);
 			incident.evidences.push(...evidenceList);
 		}
-		incident.save();
+		await incident.save();
+		await incident.populate('evidences');
 
 		res.status(200).json({
 			success: true,

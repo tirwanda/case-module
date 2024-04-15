@@ -29,10 +29,12 @@ import {
   getStatementLettersByIncidentId,
   deleteStatementLetterById,
 } from "api/statementLetterAPI";
+import { set } from "date-fns";
 
 function StatementLetter() {
   const [statementLetters, setStatementLetters] = useState(dataTableStatementLetter);
   const [openModal, setOpenModal] = useState(false);
+  const [onSave, setOnSave] = useState(false);
   const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picNameList, setPicNameList] = useState([]);
   const [picList, setPicList] = useState([]);
@@ -147,6 +149,7 @@ function StatementLetter() {
   };
 
   const handleAddStatementLetter = async () => {
+    setOnSave(true);
     const storageRef = ref(storage, `Statement-Letter/${fileName}.pdf`);
     await uploadBytes(storageRef, dataFile).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(async (downloadURL) => {
@@ -157,10 +160,10 @@ function StatementLetter() {
           attachmentName: fileName,
         }).then((response) => {
           statementLetterInit();
-          handleCloseModal();
         });
       });
     });
+    handleCloseModal();
 
     setStatementLetterData({
       type: "",
@@ -251,6 +254,7 @@ function StatementLetter() {
                     color="dark"
                     onClick={() => {
                       setOpenModal(true);
+                      setOnSave(false);
                       document.getElementById("fileInput").value = null;
                       setDataFile(null);
                       setFileName(`${v4()}`);
@@ -450,7 +454,7 @@ function StatementLetter() {
                           statementLetterData.name &&
                           statementLetterData.picId &&
                           dataFile
-                        )
+                        ) || onSave
                       }
                       onClick={handleAddStatementLetter}
                     >

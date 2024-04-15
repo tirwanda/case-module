@@ -23,6 +23,8 @@ import PageviewOutlinedIcon from "@mui/icons-material/PageviewOutlined";
 import dataTableEvidence from "../../data/dataTableEvidence";
 import FormField from "../FormField";
 import MDInput from "components/MDInput";
+import { set } from "date-fns";
+import { getIncident } from "api/incidentAPI";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -40,6 +42,7 @@ function Evidence({ incidentInfo }) {
   const [evidences, setEvidences] = useState(dataTableEvidence);
   const [openModal, setOpenModal] = useState(false);
   const [dataFile, setDataFile] = useState(null);
+  const [onUpload, setOnUpload] = useState(false);
   const [fileName, setFileName] = useState("");
   // butuh key pada file yang diupload di firebase
   const [evidenceFirebaseId, setEvidenceFirebaseId] = useState("");
@@ -101,39 +104,42 @@ function Evidence({ incidentInfo }) {
 
   const initEvidenceTable = async () => {
     const tempRows = [];
-    incidentInfo.evidences.forEach((evidence, index) => {
-      tempRows.push({
-        no: index + 1,
-        evidenceName: evidence.evidenceName,
-        actions: (
-          <MDBox
-            display="flex"
-            justifyContent="space-between"
-            alignItems="flex-start"
-            mt={{ xs: 2, sm: 0 }}
-            mr={{ xs: -1.5, sm: 0 }}
-          >
-            <Link href={evidence.attachment} target="_blank">
-              <MDButton variant="text" color="dark">
-                <PageviewOutlinedIcon />
-                &nbsp;view
-              </MDButton>
-            </Link>
-            <MDButton
-              variant="text"
-              color="error"
-              onClick={() => handleDeleteEvidence(evidence._id, evidence.attachment)}
+    await getIncident(incidentId).then((response) => {
+      response.data.incident.evidences.forEach((evidence, index) => {
+        tempRows.push({
+          no: index + 1,
+          evidenceName: evidence.evidenceName,
+          actions: (
+            <MDBox
+              display="flex"
+              justifyContent="space-between"
+              alignItems="flex-start"
+              mt={{ xs: 2, sm: 0 }}
+              mr={{ xs: -1.5, sm: 0 }}
             >
-              <Icon>delete</Icon>&nbsp;delete
-            </MDButton>
-          </MDBox>
-        ),
+              <Link href={evidence.attachment} target="_blank">
+                <MDButton variant="text" color="dark">
+                  <PageviewOutlinedIcon />
+                  &nbsp;view
+                </MDButton>
+              </Link>
+              <MDButton
+                variant="text"
+                color="error"
+                onClick={() => handleDeleteEvidence(evidence._id, evidence.attachment)}
+              >
+                <Icon>delete</Icon>&nbsp;delete
+              </MDButton>
+            </MDBox>
+          ),
+        });
       });
     });
     setEvidences({ ...evidences, rows: tempRows });
   };
 
   const handleSaveEvidence = async () => {
+    setOnUpload(true);
     const storageRef = ref(storage, `Evidences/${fileName}`);
     await uploadBytes(storageRef, dataFile).then((snapshot) => {
       getDownloadURL(snapshot.ref)
@@ -142,7 +148,9 @@ function Evidence({ incidentInfo }) {
             evidences: [{ evidenceName: fileName, attachment: downloadURL }],
           }).then((response) => {
             const tempRows = [];
+            console.log("Response: ", response);
             response.data.incident.evidences.forEach((evidence, index) => {
+              console.log("Evidence: ", evidence);
               tempRows.push({
                 no: index + 1,
                 evidenceName: evidence.evidenceName,
@@ -199,8 +207,7 @@ function Evidence({ incidentInfo }) {
 
   useEffect(() => {
     initEvidenceTable();
-    // setEvidences({ ...evidences, rows: incidentInfo.evidences });
-  }, [incidentInfo]);
+  }, []);
 
   return (
     <MDBox py={1}>
@@ -222,7 +229,10 @@ function Evidence({ incidentInfo }) {
                     variant="contained"
                     color="dark"
                     startIcon={<CloudUploadIcon color="white" />}
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                      setOnUpload(false);
+                      setOpenModal(true);
+                    }}
                   >
                     Add Evidence
                   </MDButton>
@@ -329,7 +339,7 @@ function Evidence({ incidentInfo }) {
                       variant="gradient"
                       color="info"
                       size="small"
-                      disabled={!(dataFile && fileName)}
+                      disabled={!(dataFile && fileName) || onUpload}
                       onClick={handleSaveEvidence}
                     >
                       Save

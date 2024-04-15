@@ -21,6 +21,7 @@ function Witness() {
   const [witnesses, setWitnesses] = useState(dataTableWitness);
   const [openModal, setOpenModal] = useState(false);
   const [picList, setPicList] = useState([]);
+  const [onSave, setOnSave] = useState(false);
   const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picNameList, setPicNameList] = useState([]);
   const [witnessData, setWitnessData] = useState({
@@ -61,10 +62,11 @@ function Witness() {
   };
 
   const handleAddWitness = async () => {
+    setOnSave(true);
     await addWitness(witnessData).then((response) => {
       witnessInit();
-      handleCloseModal();
     });
+    handleCloseModal();
   };
 
   const handleCloseModal = () => {
@@ -155,7 +157,10 @@ function Witness() {
                     role={undefined}
                     variant="contained"
                     color="dark"
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                      setOnSave(false);
+                      setOpenModal(true);
+                    }}
                   >
                     Tambahkan Saksi
                   </MDButton>
@@ -308,7 +313,7 @@ function Witness() {
                           witnessData.name &&
                           witnessData.KTP &&
                           witnessData.picId
-                        )
+                        ) || onSave
                       }
                       onClick={handleAddWitness}
                     >

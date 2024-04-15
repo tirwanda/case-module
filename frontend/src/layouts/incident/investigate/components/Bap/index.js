@@ -32,11 +32,13 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { getAllPICArea } from "api/picAreaAPI";
 import { addBap, getBapByIncidentId, deleteBapById } from "api/bapAPI";
 import dataTableBap from "../../data/dataTableBap";
+import { set } from "date-fns";
 
 function Bap() {
   const [baps, setBaps] = useState(dataTableBap);
   const [openModal, setOpenModal] = useState(false);
   const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
+  const [onSave, setOnSave] = useState(false);
   const [picList, setPicList] = useState([]);
   const [checkerList, setCheckerList] = useState([]);
   const [picNameList, setPicNameList] = useState([]);
@@ -104,6 +106,7 @@ function Bap() {
   };
 
   const handleAddBap = async () => {
+    setOnSave(true);
     const storageRef = ref(storage, `BAP/${fileName}.pdf`);
     await uploadBytes(storageRef, dataFile).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(async (downloadURL) => {
@@ -113,10 +116,10 @@ function Bap() {
           attachmentName: fileName,
         }).then((response) => {
           bapInit();
-          handleCloseModal();
         });
       });
     });
+    handleCloseModal();
 
     setBapData({
       type: "",
@@ -140,7 +143,10 @@ function Bap() {
     });
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    setOnSave(false);
+    setOpenModal(false);
+  };
   const handleDownloadTemplate = async () => {
     try {
       // Path to the template file in Firebase Storage
@@ -281,6 +287,7 @@ function Bap() {
                       setOpenModal(true);
                       document.getElementById("fileInput").value = null;
                       setDataFile(null);
+                      setOnSave(false);
                       setFileName(`${v4()}`);
                     }}
                   >
@@ -639,7 +646,7 @@ function Bap() {
                           bapData.location &&
                           bapData.purposes &&
                           dataFile
-                        )
+                        ) || onSave
                       }
                       onClick={handleAddBap}
                     >

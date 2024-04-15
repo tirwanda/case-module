@@ -33,10 +33,12 @@ import {
   addCallingLetter,
   getCallingLetterByIncidentId,
 } from "api/callingLetterAPI";
+import { set } from "date-fns";
 
 function CallingLetter() {
   const [callingLetters, setCallingLetters] = useState(dataTableCallingLetter);
   const [openModal, setOpenModal] = useState(false);
+  const [onSave, setOnSave] = useState(false);
   const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picList, setPicList] = useState([]);
   const [callerList, setCallerList] = useState([]);
@@ -102,6 +104,7 @@ function CallingLetter() {
   };
 
   const handleAddCallingLetter = async () => {
+    setOnSave(true);
     const storageRef = ref(storage, `Calling-Letter/${fileName}.pdf`);
     await uploadBytes(storageRef, dataFile).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(async (downloadURL) => {
@@ -111,10 +114,10 @@ function CallingLetter() {
           attachmentName: fileName,
         }).then((response) => {
           callinLetterInit();
-          handleCloseModal();
         });
       });
     });
+    handleCloseModal();
 
     setCallingLetterData({
       type: "",
@@ -277,6 +280,7 @@ function CallingLetter() {
                       setOpenModal(true);
                       document.getElementById("fileInput").value = null;
                       setDataFile(null);
+                      setOnSave(false);
                       setFileName(`${v4()}`);
                     }}
                   >
@@ -566,7 +570,7 @@ function CallingLetter() {
                           callingLetterData.reason &&
                           callingLetterData.purposes &&
                           dataFile
-                        )
+                        ) || onSave
                       }
                       onClick={handleAddCallingLetter}
                     >

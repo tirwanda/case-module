@@ -26,6 +26,7 @@ import { updateIncident } from "api/incidentAPI";
 
 function DetailIncident({ incidentInfo }) {
   const [isSubmited, setIsSubmited] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
 
   const [incidentDetail, setIncidentDetail] = useState({
     reporterName: "",
@@ -48,6 +49,7 @@ function DetailIncident({ incidentInfo }) {
 
   const handleInputChange = (e) => {
     setIncidentDetail({ ...incidentDetail, [e.target.name]: e.target.value });
+    setIsChanged(true);
   };
 
   const handleSubmitForm = async () => {
@@ -56,6 +58,7 @@ function DetailIncident({ incidentInfo }) {
       setIncidentDetail({});
       navigate("/pages/incident/list-incident");
       setIsSubmited(false);
+      setIsChanged(false);
     });
   };
 
@@ -192,6 +195,7 @@ function DetailIncident({ incidentInfo }) {
                     value={incidentDetail.incidentDate}
                     onChange={(newValue) => {
                       setIncidentDetail({ ...incidentDetail, incidentDate: newValue.getTime() });
+                      setIsChanged(true);
                     }}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -239,9 +243,10 @@ function DetailIncident({ incidentInfo }) {
                 </MDBox>
                 <MDEditor
                   value={incidentDetail.descriptions}
-                  onChange={(value) =>
-                    setIncidentDetail({ ...incidentDetail, descriptions: value })
-                  }
+                  onChange={(value) => {
+                    setIncidentDetail({ ...incidentDetail, descriptions: value });
+                    setIsChanged(true);
+                  }}
                 />
               </Grid>
             </Grid>
@@ -271,7 +276,9 @@ function DetailIncident({ incidentInfo }) {
                         incidentDetail.category &&
                         incidentDetail.location &&
                         incidentDetail.descriptions
-                      ) || isSubmited
+                      ) ||
+                      isSubmited ||
+                      !isChanged
                     }
                   >
                     Submit

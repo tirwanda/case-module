@@ -17,10 +17,12 @@ import FormField from "../FormField";
 import MDInput from "components/MDInput";
 import { getAllPICArea } from "api/picAreaAPI";
 import { addVictim, deleteVictimById } from "api/victimAPI";
+import { set } from "date-fns";
 
 function Victim() {
   const [victims, setVictims] = useState(dataTableVictim);
   const [openModal, setOpenModal] = useState(false);
+  const [onSave, setOnSave] = useState(false);
   const [picList, setPicList] = useState([]);
   const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picNameList, setPicNameList] = useState([]);
@@ -42,6 +44,7 @@ function Victim() {
   };
 
   const handleAddVictim = async () => {
+    setOnSave(true);
     await addVictim(victimData).then((response) => {
       setVictims({
         ...victims,
@@ -187,7 +190,10 @@ function Victim() {
                     role={undefined}
                     variant="contained"
                     color="dark"
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                      setOnSave(false);
+                      setOpenModal(true);
+                    }}
                   >
                     Tambahkan Korban
                   </MDButton>
@@ -335,7 +341,12 @@ function Victim() {
                       color="info"
                       size="small"
                       disabled={
-                        !(victimData.type && victimData.name && victimData.KTP && victimData.picId)
+                        !(
+                          victimData.type &&
+                          victimData.name &&
+                          victimData.KTP &&
+                          victimData.picId
+                        ) || onSave
                       }
                       onClick={handleAddVictim}
                     >

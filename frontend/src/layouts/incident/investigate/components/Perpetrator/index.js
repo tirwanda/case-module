@@ -24,6 +24,7 @@ import {
 function Perpetrator() {
   const [perpetrators, setPerpetrators] = useState(dataTablePerpetrator);
   const [openModal, setOpenModal] = useState(false);
+  const [onSave, setOnSave] = useState(false);
   const [picList, setPicList] = useState([]);
   const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picNameList, setPicNameList] = useState([]);
@@ -65,10 +66,11 @@ function Perpetrator() {
   };
 
   const handleAddPerpetrator = async () => {
+    setOnSave(true);
     await addPerpetrator(perpetratorData).then((response) => {
       perpetratorInit();
-      handleCloseModal();
     });
+    handleCloseModal();
   };
 
   const handleCloseModal = () => {
@@ -158,7 +160,10 @@ function Perpetrator() {
                     role={undefined}
                     variant="contained"
                     color="dark"
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                      setOnSave(false);
+                      setOpenModal(true);
+                    }}
                   >
                     Tambahkan Pelaku
                   </MDButton>
@@ -306,10 +311,11 @@ function Perpetrator() {
                       color="info"
                       size="small"
                       disabled={
-                        !perpetratorData.type &&
-                        !perpetratorData.name &&
-                        !perpetratorData.KTP &&
-                        !perpetratorData.picId
+                        (!perpetratorData.type &&
+                          !perpetratorData.name &&
+                          !perpetratorData.KTP &&
+                          !perpetratorData.picId) ||
+                        onSave
                       }
                       onClick={handleAddPerpetrator}
                     >
