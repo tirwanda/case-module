@@ -93,7 +93,7 @@ function Perpetrator() {
           type: perpetrator.type,
           name: perpetrator.name,
           ktp: perpetrator.KTP,
-          nrpPerpetrator: perpetrator.perpetratorNrp,
+          perpetratorNrp: perpetrator.perpetratorNrp,
           nrpPic: perpetrator.pic.nrp,
           picName: perpetrator.pic.name,
           picDepartment: perpetrator.pic.department,

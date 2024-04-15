@@ -90,7 +90,7 @@ function Witness() {
           type: witness.type,
           name: witness.name,
           ktp: witness.KTP,
-          nrpwitness: witness.witnessNrp,
+          nrpWitness: witness.witnessNrp,
           nrpPic: witness.pic.nrp,
           picName: witness.pic.name,
           picDepartment: witness.pic.department,
