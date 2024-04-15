@@ -22,6 +22,7 @@ function Victim() {
   const [victims, setVictims] = useState(dataTableVictim);
   const [openModal, setOpenModal] = useState(false);
   const [picList, setPicList] = useState([]);
+  const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picNameList, setPicNameList] = useState([]);
   const [victimData, setVictimData] = useState({
     type: "",
@@ -129,7 +130,18 @@ function Victim() {
     setVictims({ ...victims, rows: tempRows });
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    setVictimData({
+      type: "",
+      name: "",
+      KTP: "",
+      victimNrp: "",
+      picId: "",
+      vendorName: "",
+      incidentId,
+    });
+    setOpenModal(false);
+  };
 
   const handlePicChange = (name) => {
     picList.forEach((pic) => {
@@ -218,15 +230,25 @@ function Victim() {
             </MDBox>
             <MDBox component="form" role="form">
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <MDBox>
-                    <FormField
-                      name="type"
-                      label="Type Korban"
-                      placeholder="ex: Bang Adnoh"
-                      onChange={(e) =>
-                        setVictimData({ ...victimData, [e.target.name]: e.target.value })
-                      }
+                <Grid item xs={12} sm={6} style={{ paddingTop: "8px" }}>
+                  <MDBox mb={3}>
+                    <MDBox display="inline-block">
+                      <MDTypography
+                        component="label"
+                        variant="button"
+                        fontWeight="regular"
+                        color="text"
+                        textTransform="capitalize"
+                      >
+                        Type Korban
+                      </MDTypography>
+                    </MDBox>
+                    <Autocomplete
+                      onChange={(event, value) => {
+                        setVictimData({ ...victimData, type: value });
+                      }}
+                      options={typeList}
+                      renderInput={(params) => <MDInput {...params} variant="standard" />}
                     />
                   </MDBox>
                 </Grid>
@@ -261,6 +283,7 @@ function Victim() {
                       name="victimNrp"
                       label="NRP Korban"
                       placeholder="ex: 3244612446"
+                      disabled={victimData.type === "Internal AHM" ? false : true}
                       onChange={(e) =>
                         setVictimData({ ...victimData, [e.target.name]: e.target.value })
                       }
@@ -295,6 +318,7 @@ function Victim() {
                       label="Nama Vendor"
                       name="vendorName"
                       placeholder="ex: ISS"
+                      disabled={victimData.type === "Internal AHM" ? true : false}
                       onChange={(e) =>
                         setVictimData({ ...victimData, [e.target.name]: e.target.value })
                       }
@@ -310,7 +334,9 @@ function Victim() {
                       variant="gradient"
                       color="info"
                       size="small"
-                      disabled={!(victimData.type && victimData.name && victimData.KTP)}
+                      disabled={
+                        !(victimData.type && victimData.name && victimData.KTP && victimData.picId)
+                      }
                       onClick={handleAddVictim}
                     >
                       Save

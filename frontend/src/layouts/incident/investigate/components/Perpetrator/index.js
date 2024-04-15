@@ -25,6 +25,7 @@ function Perpetrator() {
   const [perpetrators, setPerpetrators] = useState(dataTablePerpetrator);
   const [openModal, setOpenModal] = useState(false);
   const [picList, setPicList] = useState([]);
+  const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picNameList, setPicNameList] = useState([]);
   const [perpetratorData, setPerpetratorData] = useState({
     type: "",
@@ -70,7 +71,19 @@ function Perpetrator() {
     });
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    setPerpetratorData({
+      type: "",
+      name: "",
+      KTP: "",
+      perpetratorNrp: "",
+      picId: "",
+      picDepartment: "",
+      vendorName: "",
+      incidentId,
+    });
+    setOpenModal(false);
+  };
 
   const perpetratorInit = async () => {
     const tempArray = [];
@@ -188,15 +201,25 @@ function Perpetrator() {
             </MDBox>
             <MDBox component="form" role="form">
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <MDBox>
-                    <FormField
-                      name="type"
-                      label="Type Pelaku"
-                      placeholder="ex: Bang Adnoh"
-                      onChange={(e) =>
-                        setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
-                      }
+                <Grid item xs={12} sm={6} style={{ paddingTop: "8px" }}>
+                  <MDBox mb={3}>
+                    <MDBox display="inline-block">
+                      <MDTypography
+                        component="label"
+                        variant="button"
+                        fontWeight="regular"
+                        color="text"
+                        textTransform="capitalize"
+                      >
+                        Type Pelaku
+                      </MDTypography>
+                    </MDBox>
+                    <Autocomplete
+                      onChange={(event, value) => {
+                        setPerpetratorData({ ...perpetratorData, type: value });
+                      }}
+                      options={typeList}
+                      renderInput={(params) => <MDInput {...params} variant="standard" />}
                     />
                   </MDBox>
                 </Grid>
@@ -231,6 +254,7 @@ function Perpetrator() {
                       name="perpetratorNrp"
                       label="NRP Pelaku"
                       placeholder="ex: 3244612446"
+                      disabled={perpetratorData.type === "Eksternal AHM"}
                       onChange={(e) =>
                         setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
                       }
@@ -265,6 +289,7 @@ function Perpetrator() {
                       label="Nama Vendor"
                       name="vendorName"
                       placeholder="ex: ISS"
+                      disabled={perpetratorData.type === "Internal AHM"}
                       onChange={(e) =>
                         setPerpetratorData({ ...perpetratorData, [e.target.name]: e.target.value })
                       }
@@ -280,7 +305,12 @@ function Perpetrator() {
                       variant="gradient"
                       color="info"
                       size="small"
-                      // disabled={!(victimData.type && victimData.name && victimData.ktp)}
+                      disabled={
+                        !perpetratorData.type &&
+                        !perpetratorData.name &&
+                        !perpetratorData.KTP &&
+                        !perpetratorData.picId
+                      }
                       onClick={handleAddPerpetrator}
                     >
                       Save

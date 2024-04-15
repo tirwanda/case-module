@@ -21,6 +21,7 @@ function Witness() {
   const [witnesses, setWitnesses] = useState(dataTableWitness);
   const [openModal, setOpenModal] = useState(false);
   const [picList, setPicList] = useState([]);
+  const [typeList, setTypeList] = useState(["Internal AHM", "Eksternal AHM"]);
   const [picNameList, setPicNameList] = useState([]);
   const [witnessData, setWitnessData] = useState({
     type: "",
@@ -66,7 +67,20 @@ function Witness() {
     });
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    setWitnessData({
+      type: "",
+      name: "",
+      KTP: "",
+      witnessNrp: "",
+      picId: "",
+      picName: "",
+      picDepartment: "",
+      vendorName: "",
+      incidentId,
+    });
+    setOpenModal(false);
+  };
 
   const witnessInit = async () => {
     const tempArray = [];
@@ -184,15 +198,25 @@ function Witness() {
             </MDBox>
             <MDBox component="form" role="form">
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <MDBox>
-                    <FormField
-                      name="type"
-                      label="Type Saksi"
-                      placeholder="ex: Bang Adnoh"
-                      onChange={(e) =>
-                        setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
-                      }
+                <Grid item xs={12} sm={6} style={{ paddingTop: "8px" }}>
+                  <MDBox mb={3}>
+                    <MDBox display="inline-block">
+                      <MDTypography
+                        component="label"
+                        variant="button"
+                        fontWeight="regular"
+                        color="text"
+                        textTransform="capitalize"
+                      >
+                        Type Saksi
+                      </MDTypography>
+                    </MDBox>
+                    <Autocomplete
+                      onChange={(event, value) => {
+                        setWitnessData({ ...witnessData, type: value });
+                      }}
+                      options={typeList}
+                      renderInput={(params) => <MDInput {...params} variant="standard" />}
                     />
                   </MDBox>
                 </Grid>
@@ -227,6 +251,7 @@ function Witness() {
                       name="witnessNrp"
                       label="NRP Saksi"
                       placeholder="ex: 3244612446"
+                      disabled={witnessData.type === "Internal AHM" ? false : true}
                       onChange={(e) =>
                         setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
                       }
@@ -261,6 +286,7 @@ function Witness() {
                       label="Nama Vendor"
                       name="vendorName"
                       placeholder="ex: ISS"
+                      disabled={witnessData.type === "Internal AHM" ? true : false}
                       onChange={(e) =>
                         setWitnessData({ ...witnessData, [e.target.name]: e.target.value })
                       }
@@ -276,7 +302,14 @@ function Witness() {
                       variant="gradient"
                       color="info"
                       size="small"
-                      // disabled={!(victimData.type && victimData.name && victimData.ktp)}
+                      disabled={
+                        !(
+                          witnessData.type &&
+                          witnessData.name &&
+                          witnessData.KTP &&
+                          witnessData.picId
+                        )
+                      }
                       onClick={handleAddWitness}
                     >
                       Save
