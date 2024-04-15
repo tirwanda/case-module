@@ -32,6 +32,7 @@ import VictimDetail from "./components/VictimDetail";
 import WitnessDetail from "./components/WitnessDetail";
 import PerpetratorDetail from "./components/PerpetratorDetail";
 import CallingLetterDetail from "./components/CallingLetterDetail";
+import StatementLetterDetail from "./components/StatementLetterDetail.js";
 
 function ViewIncident() {
   const [evidences, setEvidences] = useState(dataTableEvidence);
@@ -132,6 +133,8 @@ function ViewIncident() {
             <PerpetratorDetail />
             <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
             <CallingLetterDetail />
+            <Divider orientation="horizontal" sx={{ ml: -2, mr: 1 }} />
+            <StatementLetterDetail />
           </MDBox>
         </Card>
       </MDBox>
