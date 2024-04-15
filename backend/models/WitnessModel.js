@@ -14,6 +14,10 @@ const witnessSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		witnessNrp: {
+			type: String,
+			default: '',
+		},
 		pic: {
 			type: mongoose.Types.ObjectId,
 			ref: 'Employe',

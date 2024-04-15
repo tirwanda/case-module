@@ -13,6 +13,7 @@ exports.createPerpetrator = catchAsyncErrors(async (req, res, next) => {
 			ktpAddress,
 			domicile,
 			picId,
+			perpetratorNrp,
 			vendorName,
 			incidentId,
 		} = req.body;
@@ -33,6 +34,7 @@ exports.createPerpetrator = catchAsyncErrors(async (req, res, next) => {
 			KTP,
 			ktpAddress,
 			domicile,
+			perpetratorNrp,
 			pic: employe,
 			vendorName,
 			incident: checkIncident,
@@ -101,6 +103,56 @@ exports.getPerpetratorsByIncidentId = catchAsyncErrors(
 		}
 	}
 );
+
+exports.updatePerpetratorById = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const perpetratorId = req.params.perpetratorId;
+		const {
+			type,
+			name,
+			KTP,
+			ktpAddress,
+			domicile,
+			incidentId,
+			picId,
+			perpetratorNrp,
+			vendorName,
+		} = req.body;
+
+		const perpetrator = await Perpetrator.findById(perpetratorId);
+		const employe = await Employee.findById(picId);
+		const checkIncident = await Incident.findById(incidentId);
+
+		if (!perpetrator) {
+			return next(new ErrorHandler('Perpetrator not found', 404));
+		}
+		if (!employe) {
+			return next(new ErrorHandler('PIC Area is not exist', 401));
+		}
+		if (!checkIncident) {
+			return next(new ErrorHandler('Incident is not exist', 401));
+		}
+
+		perpetrator.type = type;
+		perpetrator.name = name;
+		perpetrator.KTP = KTP;
+		perpetrator.ktpAddress = ktpAddress;
+		perpetrator.domicile = domicile;
+		perpetrator.pic = employe;
+		perpetrator.perpetratorNrp = perpetratorNrp;
+		perpetrator.vendorName = vendorName;
+
+		await perpetrator.save();
+
+		res.status(200).json({
+			success: true,
+			message: 'Perpetrator updated successfully',
+			perpetrator,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
 
 exports.deletePerpetratorById = catchAsyncErrors(async (req, res, next) => {
 	try {

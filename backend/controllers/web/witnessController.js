@@ -6,7 +6,8 @@ const catchAsyncErrors = require('../../middleware/catchAsyncErrors.js');
 
 exports.createWitness = catchAsyncErrors(async (req, res, next) => {
 	try {
-		const { type, name, KTP, picId, vendorName, incidentId } = req.body;
+		const { type, name, KTP, picId, vendorName, incidentId, witnessNrp } =
+			req.body;
 		const employe = await Employee.findById(picId);
 		const checkIncident = await Incident.findById(incidentId);
 
@@ -22,6 +23,7 @@ exports.createWitness = catchAsyncErrors(async (req, res, next) => {
 			type,
 			name,
 			KTP,
+			witnessNrp,
 			pic: employe,
 			vendorName,
 			incident: checkIncident,
@@ -90,7 +92,7 @@ exports.getWitnessByIncidentId = catchAsyncErrors(async (req, res, next) => {
 exports.updateWitness = catchAsyncErrors(async (req, res, next) => {
 	try {
 		const witnessId = req.params.witnessId;
-		const { type, name, KTP, picId, vendorName } = req.body;
+		const { type, name, KTP, picId, vendorName, witnessNrp } = req.body;
 
 		const employe = await Employee.findById(picId);
 
@@ -102,6 +104,7 @@ exports.updateWitness = catchAsyncErrors(async (req, res, next) => {
 			witnessId,
 			{
 				type,
+				witnessNrp,
 				name,
 				KTP,
 				pic: employe,

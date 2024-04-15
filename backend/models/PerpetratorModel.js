@@ -14,6 +14,10 @@ const perpetratorSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		perpetratorNrp: {
+			type: String,
+			default: '',
+		},
 		ktpAddress: {
 			type: String,
 			default: '',
