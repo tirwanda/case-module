@@ -73,7 +73,7 @@ const incidentSchema = new mongoose.Schema(
 		},
 		status: {
 			type: String,
-			default: 'Open',
+			default: 'Created',
 		},
 		evidences: [
 			{

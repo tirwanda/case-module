@@ -34,11 +34,10 @@ import RegisterStepper from "layouts/authentication/sign-up/cover";
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
-import SecurityPICArea from "layouts/dashboards/securityPICArea";
-import Employes from "layouts/dashboards/employes";
 import UpdateIncident from "layouts/incident/update-incident";
 import ViewIncident from "layouts/incident/view-incident";
 import Investigate from "layouts/incident/investigate";
+import Analytics from "layouts/dashboards/analytics";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -130,16 +129,10 @@ export default function App() {
     if (role === "ROLE_ADMIN" || role === "ROLE_USER") {
       return [
         {
-          name: "Security PIC Area",
-          key: "Security PIC Area",
-          route: "/dashboards/security-pic-area",
-          component: <SecurityPICArea />,
-        },
-        {
-          name: "Employes",
-          key: "Employes",
-          route: "/dashboards/employes",
-          component: <Employes />,
+          name: "Analytics",
+          key: "analytics",
+          route: "/dashboards/analytics",
+          component: <Analytics />,
         },
       ];
     }
@@ -149,8 +142,6 @@ export default function App() {
   const handleRoutes = () => {
     const newRoutes = [...customRoutes];
     const posDashboardSideNav = newRoutes.findIndex((route) => route.key === "dashboards");
-
-    newRoutes[posDashboardSideNav].collapse = getDashboardRoutes();
 
     setCustomRoutes(newRoutes);
   };
@@ -191,12 +182,12 @@ export default function App() {
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
+        {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
         <Route path="/sign-in" element={<SignInBasic />} />
         <Route path="/registration" element={<RegisterStepper />} />
         <Route path="/pages/incident/:incidentId" element={<UpdateIncident />} />
         <Route path="/pages/view-incident/:incidentId" element={<ViewIncident />} />
         <Route path="/pages/investigate/:incidentId" element={<Investigate />} />
-        {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
         <Route path="*" element={<Navigate to="/sign-in" />} />
       </Routes>
     </ThemeProvider>

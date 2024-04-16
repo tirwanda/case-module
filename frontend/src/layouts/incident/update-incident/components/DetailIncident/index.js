@@ -26,6 +26,50 @@ import { updateIncident, getIncident } from "api/incidentAPI";
 
 function DetailIncident() {
   const [isSubmited, setIsSubmited] = useState(false);
+  const [reportSources, setReportSources] = useState([
+    "Security Guard Tour",
+    "Laporan User / Karyawan",
+    "Laporan Security",
+  ]);
+  const [listStatus, setListStatus] = useState([
+    "Created",
+    "Verified",
+    "Waiting for Approval",
+    "Returned",
+    "Approved",
+    "Rejected",
+    "Investigated",
+    "Closed",
+    "Freezed",
+  ]);
+  const [ListCategory, setListCategory] = useState([
+    "Vandalisme",
+    "Tata Tertib Confidentiality",
+    "Tata Tertib Lalulintas",
+    "Penemuan Barang",
+    "Kehilangan Barang",
+    "Perjudian",
+    "Ancaman / Paksaan",
+    "Berbuat Onar",
+    "Fraud",
+    "Sabotase",
+    "Pencurian Barang Non-Pribadi",
+    "Penyebaran Berita Palsu",
+    "Membocorkan Rahasia Perusahaan",
+    "Pengrusakan",
+    "Politik Praktis",
+  ]);
+  const [listPlant, setListPlant] = useState([
+    "P1 Sunter",
+    "P2 Pegangsaan",
+    "Pulo Gadung",
+    "P3 Cikarang",
+    "P4 Karawang",
+    "P5 Karawang",
+    "P6 Deltamas",
+    "PQE",
+    "SRTC",
+  ]);
 
   const [incidentDetail, setIncidentDetail] = useState({
     reporterName: "",
@@ -37,7 +81,8 @@ function DetailIncident() {
     category: "",
     plant: "",
     location: "",
-    status: "Open",
+    status: "",
+    reportSources: "",
     incidentDate: new Date().getTime(),
     phone: 0,
     reportSource: "Laporan User",
@@ -114,7 +159,7 @@ function DetailIncident() {
                     onChange={(event, value) => {
                       setIncidentDetail({ ...incidentDetail, plant: value });
                     }}
-                    options={["Plant 1 - Sunter", "Plant 2", "Plant 3", "Plant 4"]}
+                    options={listPlant}
                     value={incidentDetail.plant}
                     renderInput={(params) => <MDInput {...params} variant="standard" />}
                   />
@@ -138,7 +183,7 @@ function DetailIncident() {
                       setIncidentDetail({ ...incidentDetail, category: value });
                     }}
                     value={incidentDetail.category}
-                    options={["Kehilangan", "Pencurian", "Kecelakaan", "Kebakaran", "Perkelahian"]}
+                    options={ListCategory}
                     renderInput={(params) => <MDInput {...params} variant="standard" />}
                   />
                 </MDBox>
@@ -192,6 +237,52 @@ function DetailIncident() {
                       "Quality Control",
                       "Business Process Integration",
                     ]}
+                    renderInput={(params) => <MDInput {...params} variant="standard" />}
+                  />
+                </MDBox>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <MDBox mb={3}>
+                  <MDBox display="inline-block">
+                    <MDTypography
+                      component="label"
+                      variant="button"
+                      fontWeight="regular"
+                      color="text"
+                      textTransform="capitalize"
+                    >
+                      Sumber Laporan
+                    </MDTypography>
+                  </MDBox>
+                  <Autocomplete
+                    onChange={(event, value) => {
+                      setIncidentDetail({ ...incidentDetail, reportSource: value });
+                    }}
+                    value={incidentDetail.reportSource}
+                    options={reportSources}
+                    renderInput={(params) => <MDInput {...params} variant="standard" />}
+                  />
+                </MDBox>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <MDBox mb={3}>
+                  <MDBox display="inline-block">
+                    <MDTypography
+                      component="label"
+                      variant="button"
+                      fontWeight="regular"
+                      color="text"
+                      textTransform="capitalize"
+                    >
+                      Status
+                    </MDTypography>
+                  </MDBox>
+                  <Autocomplete
+                    onChange={(event, value) => {
+                      setIncidentDetail({ ...incidentDetail, status: value });
+                    }}
+                    value={incidentDetail.status}
+                    options={listStatus}
                     renderInput={(params) => <MDInput {...params} variant="standard" />}
                   />
                 </MDBox>

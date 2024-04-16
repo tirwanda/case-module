@@ -60,7 +60,7 @@ function Basic() {
           localStorage.setItem("ROLE", response.data.user.role);
         }
         setUser(dispatch, response.data.user);
-        navigate("/dashboards/security-pic-area");
+        navigate("/dashboards/analytics");
       })
       .catch((err) => {
         setOnSignIn(false);

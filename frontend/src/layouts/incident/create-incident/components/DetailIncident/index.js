@@ -26,6 +26,39 @@ import { addIncident } from "api/incidentAPI";
 
 function DetailIncident() {
   const [isSubmited, setIsSubmited] = useState(false);
+  const [reportSources, setReportSources] = useState([
+    "Security Guard Tour",
+    "Laporan User / Karyawan",
+    "Laporan Security",
+  ]);
+  const [ListCategory, setListCategory] = useState([
+    "Vandalisme",
+    "Tata Tertib Confidentiality",
+    "Tata Tertib Lalulintas",
+    "Penemuan Barang",
+    "Kehilangan Barang",
+    "Perjudian",
+    "Ancaman / Paksaan",
+    "Berbuat Onar",
+    "Fraud",
+    "Sabotase",
+    "Pencurian Barang Non-Pribadi",
+    "Penyebaran Berita Palsu",
+    "Membocorkan Rahasia Perusahaan",
+    "Pengrusakan",
+    "Politik Praktis",
+  ]);
+  const [listPlant, setListPlant] = useState([
+    "P1 Sunter",
+    "P2 Pegangsaan",
+    "Pulo Gadung",
+    "P3 Cikarang",
+    "P4 Karawang",
+    "P5 Karawang",
+    "P6 Deltamas",
+    "PQE",
+    "SRTC",
+  ]);
 
   const [incidentDetail, setIncidentDetail] = useState({
     reporterName: "",
@@ -97,7 +130,7 @@ function DetailIncident() {
                 onChange={(event, value) => {
                   setIncidentDetail({ ...incidentDetail, plant: value });
                 }}
-                options={["Plant 1", "Plant 2", "Plant 3", "Plant 4"]}
+                options={listPlant}
                 renderInput={(params) => <MDInput {...params} variant="standard" />}
               />
             </MDBox>
@@ -119,7 +152,7 @@ function DetailIncident() {
                 onChange={(event, value) => {
                   setIncidentDetail({ ...incidentDetail, category: value });
                 }}
-                options={["Kehilangan", "Pencurian", "Kecelakaan", "Kebakaran", "Perkelahian"]}
+                options={ListCategory}
                 renderInput={(params) => <MDInput {...params} variant="standard" />}
               />
             </MDBox>
@@ -164,6 +197,28 @@ function DetailIncident() {
                   setIncidentDetail({ ...incidentDetail, reporterDepartment: value });
                 }}
                 options={["Security", "Safety", "Engineering", "Production", "Quality Control"]}
+                renderInput={(params) => <MDInput {...params} variant="standard" />}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <MDBox mb={3}>
+              <MDBox display="inline-block">
+                <MDTypography
+                  component="label"
+                  variant="button"
+                  fontWeight="regular"
+                  color="text"
+                  textTransform="capitalize"
+                >
+                  Sumber Laporan
+                </MDTypography>
+              </MDBox>
+              <Autocomplete
+                onChange={(event, value) => {
+                  setIncidentDetail({ ...incidentDetail, reportSource: value });
+                }}
+                options={reportSources}
                 renderInput={(params) => <MDInput {...params} variant="standard" />}
               />
             </MDBox>

@@ -10,15 +10,18 @@ import MDAvatar from "components/MDAvatar";
 import Icon from "@mui/material/Icon";
 
 // Images
-import profilePicture from "assets/images/team-3.jpg";
+import profilePicture from "assets/images/shield.png";
 import Incidents from "layouts/incident/incidents";
+import Employes from "layouts/dashboards/employes";
+import SecurityPICArea from "layouts/dashboards/securityPICArea";
+import Analytics from "layouts/dashboards/analytics";
 
 const routes = [
   {
     type: "collapse",
-    name: "PEAE5",
-    key: "PEAE5",
-    icon: <MDAvatar src={profilePicture} alt="PEAE5" size="sm" />,
+    name: "Security Case Module",
+    key: "case-module",
+    icon: <MDAvatar src={profilePicture} alt="case-module" size="sm" />,
     collapse: [
       {
         name: "My Profile",
@@ -46,12 +49,19 @@ const routes = [
     name: "Dashboards",
     key: "dashboards",
     icon: <Icon fontSize="medium">dashboard</Icon>,
-    collapse: [],
+    collapse: [
+      {
+        name: "Analytics",
+        key: "analytics",
+        route: "/dashboards/analytics",
+        component: <Analytics />,
+      },
+    ],
   },
   { type: "title", title: "Pages", key: "title-pages" },
   {
     type: "collapse",
-    name: "Incident",
+    name: "INCIDENT",
     key: "incidents",
     icon: <Icon fontSize="medium">apps</Icon>,
     collapse: [
@@ -71,17 +81,23 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Report",
-    key: "report",
-    icon: <Icon fontSize="medium">summarize</Icon>,
-    collapse: [],
-  },
-  {
-    type: "collapse",
-    name: "Assets",
-    key: "assets",
-    icon: <Icon fontSize="medium">precision_manufacturing</Icon>,
-    collapse: [],
+    name: "SECURITY",
+    key: "security",
+    icon: <Icon fontSize="medium">admin_panel_settings</Icon>,
+    collapse: [
+      {
+        name: "Employees",
+        key: "employees",
+        route: "/pages/security/employees",
+        component: <Employes />,
+      },
+      {
+        name: "PIC Area",
+        key: "pic-area",
+        route: "/pages/security/pic-area",
+        component: <SecurityPICArea />,
+      },
+    ],
   },
 ];
 

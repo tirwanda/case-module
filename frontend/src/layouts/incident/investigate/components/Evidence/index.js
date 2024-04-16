@@ -148,9 +148,7 @@ function Evidence({ incidentInfo }) {
             evidences: [{ evidenceName: fileName, attachment: downloadURL }],
           }).then((response) => {
             const tempRows = [];
-            console.log("Response: ", response);
             response.data.incident.evidences.forEach((evidence, index) => {
-              console.log("Evidence: ", evidence);
               tempRows.push({
                 no: index + 1,
                 evidenceName: evidence.evidenceName,
