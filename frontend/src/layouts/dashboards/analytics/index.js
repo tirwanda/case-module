@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
-import Icon from "@mui/material/Icon";
 import { Autocomplete } from "@mui/material";
 import Card from "@mui/material/Card";
 
@@ -23,10 +22,8 @@ import HorizontalBarChart from "layouts/dashboards/analytics/components/Horizont
 import ChannelsChart from "layouts/dashboards/analytics/components/ChannelsChart";
 
 // Data
-import horizontalBarChartData from "layouts/dashboards/analytics/data/horizontalBarChartData";
 import MDInput from "components/MDInput";
 import { getDataAnalytics } from "api/analyticsAPI";
-import { set } from "date-fns";
 
 function Analytics() {
   const [searchParam, setSearchParam] = useState({ plant: "P1 Sunter" });
@@ -113,7 +110,7 @@ function Analytics() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar showRoutes={false} isMini />
       <MDBox py={3}>
         <MDBox mb={3}>
           <Grid container spacing={3}>

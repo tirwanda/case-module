@@ -43,7 +43,7 @@ function Investigate() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar showRoutes={false} />
+      <DashboardNavbar showRoutes={false} isMini />
       <MDBox mt={4}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>

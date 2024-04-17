@@ -264,7 +264,7 @@ function SecurityPICArea() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar showRoutes={false} isMini />
       <MDBox pb={1}>
         <Card id="basic-info" sx={{ overflow: "visible" }}>
           <MDBox p={3}>

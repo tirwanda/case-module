@@ -24,18 +24,6 @@ const routes = [
     icon: <MDAvatar src={profilePicture} alt="case-module" size="sm" />,
     collapse: [
       {
-        name: "My Profile",
-        key: "my-profile",
-        route: "/pages/profile/profile-overview",
-        component: <ProfileOverview />,
-      },
-      {
-        name: "Settings",
-        key: "profile-settings",
-        route: "/pages/account/settings",
-        component: <Settings />,
-      },
-      {
         name: "Logout",
         key: "logout",
         route: "/sign-in",

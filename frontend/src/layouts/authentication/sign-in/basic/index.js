@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // react-router-dom components
 import { Link, useNavigate } from "react-router-dom";
@@ -103,6 +103,10 @@ function Basic() {
       bgWhite
     />
   );
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   return (
     <BasicLayout image={bgImage}>

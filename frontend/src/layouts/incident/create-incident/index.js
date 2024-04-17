@@ -13,7 +13,7 @@ import DetailIncident from "./components/DetailIncident";
 function CreateCM() {
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar showRoutes={false} isMini />
       <MDBox mt={4}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>

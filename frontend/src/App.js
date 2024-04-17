@@ -32,8 +32,8 @@ import SignInBasic from "layouts/authentication/sign-in/basic";
 import RegisterStepper from "layouts/authentication/sign-up/cover";
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from "assets/images/AHM-white.gif";
+import brandDark from "assets/images/AHM-dark.png";
 import UpdateIncident from "layouts/incident/update-incident";
 import ViewIncident from "layouts/incident/view-incident";
 import Investigate from "layouts/incident/investigate";

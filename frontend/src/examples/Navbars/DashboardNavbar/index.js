@@ -127,7 +127,23 @@ function DashboardNavbar({ absolute, light, isMini, showRoutes }) {
             </Icon>
           </IconButton>
         </MDBox>
-        {isMini ? null : (
+        {isMini ? (
+          <MDBox sm={(theme) => navbarRow(theme, { isMini })}>
+            <MDBox color={light ? "white" : "inherit"}>
+              <IconButton
+                size="small"
+                disableRipple
+                color="inherit"
+                sx={navbarMobileMenu}
+                onClick={handleMiniSidenav}
+              >
+                <Icon sx={iconsStyle} fontSize="medium">
+                  menu
+                </Icon>
+              </IconButton>
+            </MDBox>
+          </MDBox>
+        ) : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
             <MDBox pr={1}>
               <MDInput label="Search here" />

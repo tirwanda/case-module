@@ -77,7 +77,7 @@ function ViewIncident() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar showRoutes={false} />
+      <DashboardNavbar showRoutes={false} isMini />
       <MDBox py={3}>
         <Card sx={{ overflow: "visible" }}>
           <MDBox p={3}>
