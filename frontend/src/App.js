@@ -38,6 +38,7 @@ import UpdateIncident from "layouts/incident/update-incident";
 import ViewIncident from "layouts/incident/view-incident";
 import Investigate from "layouts/incident/investigate";
 import Analytics from "layouts/dashboards/analytics";
+import SigninMobile from "layouts/authentication/sign-in/mobile";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -184,6 +185,7 @@ export default function App() {
       <Routes>
         {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
         <Route path="/sign-in" element={<SignInBasic />} />
+        <Route path="/m/sign-in" element={<SigninMobile />} />
         <Route path="/registration" element={<RegisterStepper />} />
         <Route path="/pages/incident/:incidentId" element={<UpdateIncident />} />
         <Route path="/pages/view-incident/:incidentId" element={<ViewIncident />} />
