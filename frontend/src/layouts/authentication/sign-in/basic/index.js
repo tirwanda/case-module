@@ -34,7 +34,7 @@ function Basic() {
   const [onSignIn, setOnSignIn] = useState(false);
 
   const initialState = {
-    email: "",
+    username: "",
     password: "",
   };
   const [data, setData] = useState(initialState);
@@ -56,7 +56,7 @@ function Basic() {
       .then((response) => {
         if (response.status === 201) {
           localStorage.setItem("ACCESS_TOKEN", response.data.token);
-          localStorage.setItem("EMAIL", response.data.user.email);
+          localStorage.setItem("USERNAME", response.data.user.username);
           localStorage.setItem("ROLE", response.data.user.role);
         }
         setUser(dispatch, response.data.user);
@@ -126,17 +126,16 @@ function Basic() {
             Sign in
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your email and password to sign in
+            Enter your username and password to sign in
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
               <MDInput
-                value={data.email}
-                name="email"
-                type="email"
-                label="Email"
+                value={data.username}
+                name="username"
+                label="Username"
                 onChange={handleInputChange}
                 fullWidth
               />
@@ -153,6 +152,7 @@ function Basic() {
                 label="Password"
                 onChange={handleInputChange}
                 fullWidth
+                disabled={onSignIn}
               />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>

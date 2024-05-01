@@ -6,7 +6,7 @@ const sendToken = require('../../utils/jwtToken.js');
 // Register user
 exports.createUser = catchAsyncErrors(async (req, res, next) => {
 	try {
-		const { name, email, password } = req.body;
+		const { name, email, password, username } = req.body;
 
 		let user = await User.findOne({ email });
 		if (user) {
@@ -19,6 +19,7 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
 			name,
 			email,
 			password,
+			username,
 			avatar: null,
 		});
 
@@ -33,13 +34,15 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
 
 // Login User
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
-	const { email, password } = req.body;
+	const { username, password } = req.body;
 
-	if (!email || !password) {
-		return next(new ErrorHandler('Please enter the email & password', 400));
+	if (!username || !password) {
+		return next(
+			new ErrorHandler('Please enter the username & password', 400)
+		);
 	}
 
-	const user = await User.findOne({ email }).select('+password');
+	const user = await User.findOne({ username }).select('+password');
 
 	if (!user) {
 		return next(

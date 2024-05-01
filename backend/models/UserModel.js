@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'Please enter your Name'],
 		},
+		username: {
+			type: String,
+			required: [true, 'Please enter your username'],
+			unique: true,
+		},
 		email: {
 			type: String,
 			required: [true, 'Please enter your email'],
@@ -23,7 +28,6 @@ const userSchema = new mongoose.Schema(
 		role: { type: String, default: 'ROLE_USER' },
 		title: { type: String, default: '' },
 		bio: { type: String, default: '' },
-		saveArticles: [{ type: mongoose.Types.ObjectId, ref: 'Article' }],
 		createdAt: { type: Number, default: Date.now },
 		updatedAt: { type: Number, default: Date.now },
 	},
