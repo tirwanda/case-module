@@ -83,9 +83,6 @@ function Investigate() {
                   <Grid item xs={12}>
                     <Bap />
                   </Grid>
-                  <Grid item xs={12}>
-                    <ReportVerification incidentInfo={incidentDetail} />
-                  </Grid>
                 </Grid>
               )}
             </MDBox>

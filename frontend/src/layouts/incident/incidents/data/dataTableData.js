@@ -1,6 +1,6 @@
 const dataTableData = {
   columns: [
-    { Header: "Nama", accessor: "reporterName", width: "15%" },
+    { Header: "Nama Pelapor", accessor: "reporterName", width: "15%" },
     { Header: "Plant", accessor: "plant", width: "15%" },
     { Header: "NRP", accessor: "reporterNRP", width: "10%" },
     { Header: "Category", accessor: "category", width: "20%" },

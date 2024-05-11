@@ -23,7 +23,7 @@ function IncidentInfo({ incident }) {
             kategory: `${incident.category}`,
             tanggalKejadian: `${new Date(incident.incidentDate).toLocaleString()}`,
             extension: `${incident.phone}`,
-            sumberLaporan: `${incident.source}`,
+            sumberLaporan: `${incident.reportSource}`,
             deskripsi: `${removeHTMLTags(incident.descriptions)}`,
           }}
           action={{ tooltip: "Edit Profile" }}
