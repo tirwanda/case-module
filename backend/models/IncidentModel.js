@@ -66,6 +66,13 @@ const incidentSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		investigator: [
+			{
+				type: mongoose.Types.ObjectId,
+				ref: 'User',
+				default: null,
+			},
+		],
 		reportVerivications: {
 			type: mongoose.Types.ObjectId,
 			ref: 'Report_Verivication',

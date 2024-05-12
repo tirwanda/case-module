@@ -13,7 +13,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DetailIncident from "./components/DetailIncident";
 import IncidentPictures from "./components/IncidentPictures";
 import Chronology from "./components/Chronology";
-import ReportVerification from "./components/ReportVerification";
+import Investigator from "./components/Investigator";
 
 // API
 import { getIncident } from "api/incidentAPI";
@@ -58,6 +58,9 @@ function Investigate() {
                   </Grid>
                   <Grid item xs={12}>
                     <Chronology chronologyDetail={incidentDetail.chronology} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Investigator incidentInfo={incidentDetail} />
                   </Grid>
                   <Grid item xs={12}>
                     <IncidentPictures incidentInfo={incidentDetail} />

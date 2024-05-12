@@ -1,4 +1,5 @@
 const Incident = require('../../models/IncidentModel');
+const User = require('../../models/UserModel');
 const ReportVerivications = require('../../models/ReportVerivicaationsModel');
 const Evidence = require('../../models/EvidenceModel');
 const ErrorHandler = require('../../utils/ErrorHandler');
@@ -66,7 +67,8 @@ exports.getIncidentById = catchAsyncErrors(async (req, res, next) => {
 	try {
 		const incident = await Incident.findById(req.params.id)
 			.populate('reportVerivications')
-			.populate('evidences');
+			.populate('evidences')
+			.populate('investigator');
 
 		if (!incident) {
 			return next(new ErrorHandler('Incident not found', 404));
@@ -135,6 +137,62 @@ exports.updateIncident = catchAsyncErrors(async (req, res, next) => {
 			success: true,
 			message: 'Incident updated successfully',
 			incident: updateIncident,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
+
+exports.addInvestigator = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const { userId, incidentId } = req.params;
+
+		const incident = await Incident.findById(incidentId);
+		const user = await User.findById(userId);
+
+		if (!incident) {
+			return next(new ErrorHandler('Incident not found', 404));
+		}
+
+		if (!user) {
+			return next(new ErrorHandler('User not found', 404));
+		}
+
+		await Incident.findByIdAndUpdate(incidentId, {
+			$push: { investigator: userId },
+		});
+
+		res.status(200).json({
+			success: true,
+			message: `${user.name} added as investigator`,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
+
+exports.deleteInvestigator = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const { userId, incidentId } = req.params;
+
+		const incident = await Incident.findById(incidentId);
+		const user = await User.findById(userId);
+
+		if (!incident) {
+			return next(new ErrorHandler('Incident not found', 404));
+		}
+
+		if (!user) {
+			return next(new ErrorHandler('User not found', 404));
+		}
+
+		await Incident.findByIdAndUpdate(incidentId, {
+			$pull: { investigator: userId },
+		});
+
+		res.status(200).json({
+			success: true,
+			message: `${user.name} removed as investigator`,
 		});
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 401));

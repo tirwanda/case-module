@@ -26,60 +26,85 @@ import MDInput from "components/MDInput";
 import FormField from "layouts/applications/wizard/components/FormField";
 import MDButton from "components/MDButton";
 import { getIncidents } from "api/incidentAPI";
-import { Padding } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { ca } from "date-fns/locale";
 
 function Incidents() {
   const [incidentList, setIncidentList] = useState(dataTableData);
 
   const getIncidentList = async () => {
+    const role = localStorage.getItem("ROLE");
+    const location = localStorage.getItem("LOCATION");
+    const jakartaArea = ["P1 Sunter", "P2 Pegangsaan", "Pulo Gadung"];
+    const jabarArea = ["P3 Cikarang", "P4 Karawang", "P5 Karawang", "P6 Deltamas", "PQE", "SRTC"];
+
     await getIncidents().then((response) => {
       setIncidentList({
         ...incidentList,
-        rows: response.data.incidents.map((incident) => ({
-          ...incident,
-          incidentDate: new Date(incident.incidentDate).toLocaleDateString(),
-          actions: (
-            <MDBox
-              display="flex"
-              justifyContent="space-between"
-              alignItems="flex-start"
-              mt={{ xs: 2, sm: 0 }}
-              mr={{ xs: -1.5, sm: 0 }}
-            >
-              <MDButton
-                component={Link}
-                to={`/pages/investigate/${incident._id}`}
-                variant="text"
-                color="warning"
-                size="small"
-                style={{ padding: "10px" }}
+        rows: response.data.incidents.map((incident) => {
+          let canInvestigate = false; // Initialize canInvestigate variable
+          if (
+            (role === "ROLE_DEPT_HEAD" &&
+              location === "JAKARTA" &&
+              jakartaArea.includes(incident.plant)) ||
+            (role === "ROLE_DEPT_HEAD" &&
+              location === "JABAR" &&
+              jabarArea.includes(incident.plant)) ||
+            role === "ROLE_ADMIN"
+          ) {
+            canInvestigate = true; // Update canInvestigate based on conditions
+          }
+
+          return {
+            ...incident,
+            incidentDate: new Date(incident.incidentDate).toLocaleDateString(),
+            actions: (
+              <MDBox
+                display="flex"
+                justifyContent="center"
+                mt={{ xs: 2, sm: 0 }}
+                mr={{ xs: -1.5, sm: 0 }}
               >
-                <Icon>search</Icon>&nbsp;Investigate
-              </MDButton>
-              <MDButton
-                component={Link}
-                size="small"
-                to={`/pages/incident/${incident._id}`}
-                variant="text"
-                color="dark"
-                style={{ padding: "10px" }}
-              >
-                <Icon>edit</Icon>&nbsp;Update
-              </MDButton>
-              <MDButton
-                component={Link}
-                to={`/pages/view-incident/${incident._id}`}
-                size="small"
-                variant="text"
-                color="dark"
-                style={{ padding: "10px" }}
-              >
-                <Icon>info</Icon>&nbsp;Detail
-              </MDButton>
-            </MDBox>
-          ),
-        })),
+                {canInvestigate && (
+                  <MDButton
+                    component={Link}
+                    to={`/pages/investigate/${incident._id}`}
+                    variant="text"
+                    color="warning"
+                    size="small"
+                    style={{ padding: "10px" }}
+                  >
+                    <Icon>search</Icon>&nbsp;Investigate
+                  </MDButton>
+                )}
+
+                {canInvestigate && (
+                  <MDButton
+                    component={Link}
+                    size="small"
+                    to={`/pages/incident/${incident._id}`}
+                    variant="text"
+                    color="dark"
+                    style={{ padding: "10px" }}
+                  >
+                    <Icon>edit</Icon>&nbsp;Update
+                  </MDButton>
+                )}
+
+                <MDButton
+                  component={Link}
+                  to={`/pages/view-incident/${incident._id}`}
+                  size="small"
+                  variant="text"
+                  color="dark"
+                  style={{ padding: "10px" }}
+                >
+                  <Icon>info</Icon>&nbsp;Detail
+                </MDButton>
+              </MDBox>
+            ),
+          };
+        }),
       });
     });
   };

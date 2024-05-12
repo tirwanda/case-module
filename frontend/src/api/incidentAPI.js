@@ -27,6 +27,38 @@ export const getIncident = (id) =>
     },
   });
 
+export const findUsersNotInInvestigators = (incidentId) =>
+  axios.get(`${HOST_URL}/api/v1/user/not-investigator/${incidentId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+export const addInvestigator = (incidentId, userId) =>
+  axios.put(
+    `${HOST_URL}/api/v1/incident/add-investigator/${incidentId}/${userId}`,
+    {},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+
+export const deleteInvestigator = (incidentId, userId) =>
+  axios.put(
+    `${HOST_URL}/api/v1/incident/delete-investigator/${incidentId}/${userId}`,
+    {},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+
 export const updateIncident = (id, data) =>
   axios.put(`${HOST_URL}/api/v1/incident/${id}`, data, {
     headers: {

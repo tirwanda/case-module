@@ -26,6 +26,7 @@ import { updateIncident, getIncident } from "api/incidentAPI";
 
 function DetailIncident() {
   const [isSubmited, setIsSubmited] = useState(false);
+  const [isCanpdateStatus, setIsCanpdateStatus] = useState(false);
   const [reportSources, setReportSources] = useState([
     "Security Guard Tour",
     "Laporan User / Karyawan",
@@ -38,7 +39,7 @@ function DetailIncident() {
     "Returned",
     "Approved",
     "Rejected",
-    "Investigated",
+    "Investigating",
     "Closed",
     "Freezed",
   ]);
@@ -105,7 +106,26 @@ function DetailIncident() {
   };
 
   const getIncidentDetail = async () => {
+    const role = localStorage.getItem("ROLE");
+    const location = localStorage.getItem("LOCATION");
+    const jakartaArea = ["P1 Sunter", "P2 Pegangsaan", "Pulo Gadung"];
+    const jabarArea = ["P3 Cikarang", "P4 Karawang", "P5 Karawang", "P6 Deltamas", "PQE", "SRTC"];
     await getIncident(incidentId).then((response) => {
+      if (role === "ROLE_DEPT_HEAD" && location === "JAKARTA") {
+        if (jakartaArea.includes(response.data.incident.plant)) {
+          setIsCanpdateStatus(true);
+        } else {
+          setIsCanpdateStatus(false);
+        }
+      } else if (role === "ROLE_DEPT_HEAD" && location === "JABAR") {
+        if (jabarArea.includes(response.data.incident.plant)) {
+          setIsCanpdateStatus(true);
+        } else {
+          setIsCanpdateStatus(false);
+        }
+      } else if (role === "ROLE_ADMIN") {
+        setIsCanpdateStatus(true);
+      }
       setIncidentDetail(response.data.incident);
     });
   };
@@ -282,6 +302,7 @@ function DetailIncident() {
                       setIncidentDetail({ ...incidentDetail, status: value });
                     }}
                     value={incidentDetail.status}
+                    disabled={!isCanpdateStatus}
                     options={listStatus}
                     renderInput={(params) => <MDInput {...params} variant="standard" />}
                   />

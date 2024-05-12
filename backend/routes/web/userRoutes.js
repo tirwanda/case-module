@@ -9,6 +9,7 @@ const {
 	changePassword,
 	getUserById,
 	getAllUsers,
+	findUsersNotInInvestigators,
 } = require('../../controllers/web/userController');
 const { isAuthenticatedUser } = require('../../middleware/auth');
 const router = express.Router();
@@ -20,6 +21,10 @@ router.route('/signin').post(loginUser);
 router.route('/logout').get(logoutUser);
 
 router.route('/me').get(isAuthenticatedUser, userDetails);
+
+router
+	.route('/user/not-investigator/:incidentId')
+	.get(isAuthenticatedUser, findUsersNotInInvestigators);
 
 router.route('/user/:userId').get(isAuthenticatedUser, getUserById);
 

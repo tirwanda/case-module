@@ -58,6 +58,7 @@ function Basic() {
           localStorage.setItem("ACCESS_TOKEN", response.data.token);
           localStorage.setItem("USERNAME", response.data.user.username);
           localStorage.setItem("ROLE", response.data.user.role);
+          localStorage.setItem("LOCATION", response.data.user.location);
         }
         setUser(dispatch, response.data.user);
         navigate("/dashboards/analytics");

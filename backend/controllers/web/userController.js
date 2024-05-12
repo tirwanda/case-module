@@ -1,4 +1,5 @@
 const User = require('../../models/UserModel.js');
+const Incident = require('../../models/IncidentModel.js');
 const ErrorHandler = require('../../utils/ErrorHandler.js');
 const catchAsyncErrors = require('../../middleware/catchAsyncErrors.js');
 const sendToken = require('../../utils/jwtToken.js');
@@ -115,6 +116,29 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
 		return next(new ErrorHandler(error.message, 401));
 	}
 });
+
+exports.findUsersNotInInvestigators = async (req, res, next) => {
+	try {
+		const incident = await Incident.findById(req.params.incidentId);
+
+		if (!incident) {
+			return next(new ErrorHandler('Incident not found', 404));
+		}
+
+		const investigators = incident.investigator;
+
+		const nonInvestigators = await User.find({
+			_id: { $nin: investigators },
+		});
+
+		res.status(200).json({
+			success: true,
+			users: nonInvestigators,
+		});
+	} catch (error) {
+		return next(error);
+	}
+};
 
 exports.updateUserInfo = catchAsyncErrors(async (req, res, next) => {
 	try {
