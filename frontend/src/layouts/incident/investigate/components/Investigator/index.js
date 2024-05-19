@@ -27,6 +27,7 @@ function Investigator() {
   const [onSave, setOnSave] = useState(false);
 
   const { incidentId } = useParams();
+  const role = localStorage.getItem("ROLE");
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -46,29 +47,38 @@ function Investigator() {
   };
 
   const investigatorsInit = async () => {
+    let canInvestigate = false;
+
     await getIncident(incidentId).then((res) => {
       setInvestigators({
         ...investigators,
-        rows: res.data.incident.investigator.map((user) => ({
-          ...user,
-          actions: (
-            <MDBox
-              display="flex"
-              justifyContent="space-between"
-              alignItems="flex-start"
-              mt={{ xs: 2, sm: 0 }}
-              mr={{ xs: -1.5, sm: 0 }}
-            >
-              <MDButton
-                variant="text"
-                color="error"
-                onClick={() => handleDeleteInvestigator(user._id)}
+        rows: res.data.incident.investigator.map((user) => {
+          if (role === "ROLE_ADMIN" || role === "ROLE_DEPT_HEAD") {
+            canInvestigate = true;
+          }
+          return {
+            ...user,
+            actions: (
+              <MDBox
+                display="flex"
+                justifyContent="space-between"
+                alignItems="flex-start"
+                mt={{ xs: 2, sm: 0 }}
+                mr={{ xs: -1.5, sm: 0 }}
               >
-                <Icon>delete</Icon>&nbsp;delete
-              </MDButton>
-            </MDBox>
-          ),
-        })),
+                {canInvestigate && (
+                  <MDButton
+                    variant="text"
+                    color="error"
+                    onClick={() => handleDeleteInvestigator(user._id)}
+                  >
+                    <Icon>delete</Icon>&nbsp;delete
+                  </MDButton>
+                )}
+              </MDBox>
+            ),
+          };
+        }),
       });
     });
   };
@@ -131,20 +141,23 @@ function Investigator() {
               </Grid>
 
               <MDBox ml="auto" mt={3} display="flex">
-                <MDBox mr={2}>
-                  <MDButton
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    color="dark"
-                    onClick={() => {
-                      handleShowUsersNotInvestigator();
-                      setOpenModal(true);
-                    }}
-                  >
-                    Tambahkan Innvestigator
-                  </MDButton>
-                </MDBox>
+                {role === "ROLE_ADMIN" ||
+                  (role === "ROLE_DEPT_HEAD" && (
+                    <MDBox mr={2}>
+                      <MDButton
+                        component="label"
+                        role={undefined}
+                        variant="contained"
+                        color="dark"
+                        onClick={() => {
+                          handleShowUsersNotInvestigator();
+                          setOpenModal(true);
+                        }}
+                      >
+                        Tambahkan Innvestigator
+                      </MDButton>
+                    </MDBox>
+                  ))}
               </MDBox>
             </Grid>
           </MDBox>

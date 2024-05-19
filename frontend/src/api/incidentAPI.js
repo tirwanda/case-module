@@ -35,6 +35,14 @@ export const findUsersNotInInvestigators = (incidentId) =>
     },
   });
 
+export const searchOptionsIncident = (data) =>
+  axios.post(`${HOST_URL}/api/v1/incident/search`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
 export const addInvestigator = (incidentId, userId) =>
   axios.put(
     `${HOST_URL}/api/v1/incident/add-investigator/${incidentId}/${userId}`,

@@ -59,6 +59,7 @@ function Basic() {
           localStorage.setItem("USERNAME", response.data.user.username);
           localStorage.setItem("ROLE", response.data.user.role);
           localStorage.setItem("LOCATION", response.data.user.location);
+          localStorage.setItem("USER_ID", response.data.user._id);
         }
         setUser(dispatch, response.data.user);
         navigate("/dashboards/analytics");
@@ -71,7 +72,7 @@ function Basic() {
               openErrorSB(err.response.data.error_message);
               break;
             case 401:
-              openErrorSB("Authentication Failed.Bad Credentials");
+              openErrorSB("Username or Password is incorrect");
               break;
             default:
               console.log("err: ", err);

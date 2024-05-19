@@ -10,12 +10,14 @@ const {
 	deleteEvidence,
 	addInvestigator,
 	deleteInvestigator,
+	serachIncidents,
 } = require('../../controllers/web/incidentController');
 
 const { isAuthenticatedUser } = require('../../middleware/auth');
 const router = express.Router();
 
 router.route('/create-incident').post(isAuthenticatedUser, createIncident);
+router.route('/incident/search').post(isAuthenticatedUser, serachIncidents);
 
 router.route('/incidents').get(isAuthenticatedUser, getAllIncidents);
 

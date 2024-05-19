@@ -25,23 +25,74 @@ import dataTableData from "layouts/incident/incidents/data/dataTableData";
 import MDInput from "components/MDInput";
 import FormField from "layouts/applications/wizard/components/FormField";
 import MDButton from "components/MDButton";
-import { getIncidents } from "api/incidentAPI";
+import { getIncidents, searchOptionsIncident } from "api/incidentAPI";
 import { Link } from "react-router-dom";
-import { ca } from "date-fns/locale";
+import { DatePicker } from "@mui/x-date-pickers";
 
 function Incidents() {
   const [incidentList, setIncidentList] = useState(dataTableData);
+  const [searchParam, setSearchParam] = useState({
+    name: "",
+    nrp: "",
+    plant: "",
+    category: "",
+    status: "",
+  });
+  const [listPlant, setListPlant] = useState([
+    "P1 Sunter",
+    "P2 Pegangsaan",
+    "Pulo Gadung",
+    "P3 Cikarang",
+    "P4 Karawang",
+    "P5 Karawang",
+    "P6 Deltamas",
+    "PQE",
+    "SRTC",
+  ]);
+  const [ListCategory, setListCategory] = useState([
+    "Vandalisme",
+    "Tata Tertib Confidentiality",
+    "Tata Tertib Lalulintas",
+    "Penemuan Barang",
+    "Kehilangan Barang",
+    "Perjudian",
+    "Ancaman / Paksaan",
+    "Berbuat Onar",
+    "Fraud",
+    "Sabotase",
+    "Pencurian Barang Non-Pribadi",
+    "Penyebaran Berita Palsu",
+    "Membocorkan Rahasia Perusahaan",
+    "Pengrusakan",
+    "Politik Praktis",
+  ]);
+  const [listStatus, setListStatus] = useState([
+    "Created",
+    "Verified",
+    "Waiting for Approval",
+    "Returned",
+    "Approved",
+    "Rejected",
+    "Investigating",
+    "Closed",
+    "Freezed",
+  ]);
+  const role = localStorage.getItem("ROLE");
+  const userId = localStorage.getItem("USER_ID");
+  const location = localStorage.getItem("LOCATION");
+  const jakartaArea = ["P1 Sunter", "P2 Pegangsaan", "Pulo Gadung"];
+  const jabarArea = ["P3 Cikarang", "P4 Karawang", "P5 Karawang", "P6 Deltamas", "PQE", "SRTC"];
+
+  const handleInputChange = (e) => {
+    setSearchParam({ ...searchParam, [e.target.name]: e.target.value });
+  };
 
   const getIncidentList = async () => {
-    const role = localStorage.getItem("ROLE");
-    const location = localStorage.getItem("LOCATION");
-    const jakartaArea = ["P1 Sunter", "P2 Pegangsaan", "Pulo Gadung"];
-    const jabarArea = ["P3 Cikarang", "P4 Karawang", "P5 Karawang", "P6 Deltamas", "PQE", "SRTC"];
-
     await getIncidents().then((response) => {
       setIncidentList({
         ...incidentList,
         rows: response.data.incidents.map((incident) => {
+          let investigators = incident.investigator;
           let canInvestigate = false; // Initialize canInvestigate variable
           if (
             (role === "ROLE_DEPT_HEAD" &&
@@ -50,6 +101,7 @@ function Incidents() {
             (role === "ROLE_DEPT_HEAD" &&
               location === "JABAR" &&
               jabarArea.includes(incident.plant)) ||
+            investigators.includes(userId) ||
             role === "ROLE_ADMIN"
           ) {
             canInvestigate = true; // Update canInvestigate based on conditions
@@ -109,6 +161,83 @@ function Incidents() {
     });
   };
 
+  const handleSeacrhForm = async (data) => {
+    try {
+      await searchOptionsIncident(data).then((response) => {
+        setIncidentList({
+          ...incidentList,
+          rows: response.data.incidents.map((incident) => {
+            let investigators = incident.investigator;
+            let canInvestigate = false; // Initialize canInvestigate variable
+            if (
+              (role === "ROLE_DEPT_HEAD" &&
+                location === "JAKARTA" &&
+                jakartaArea.includes(incident.plant)) ||
+              (role === "ROLE_DEPT_HEAD" &&
+                location === "JABAR" &&
+                jabarArea.includes(incident.plant)) ||
+              investigators.includes(userId) ||
+              role === "ROLE_ADMIN"
+            ) {
+              canInvestigate = true; // Update canInvestigate based on conditions
+            }
+
+            return {
+              ...incident,
+              incidentDate: new Date(incident.incidentDate).toLocaleDateString(),
+              actions: (
+                <MDBox
+                  display="flex"
+                  justifyContent="center"
+                  mt={{ xs: 2, sm: 0 }}
+                  mr={{ xs: -1.5, sm: 0 }}
+                >
+                  {canInvestigate && (
+                    <MDButton
+                      component={Link}
+                      to={`/pages/investigate/${incident._id}`}
+                      variant="text"
+                      color="warning"
+                      size="small"
+                      style={{ padding: "10px" }}
+                    >
+                      <Icon>search</Icon>&nbsp;Investigate
+                    </MDButton>
+                  )}
+
+                  {canInvestigate && (
+                    <MDButton
+                      component={Link}
+                      size="small"
+                      to={`/pages/incident/${incident._id}`}
+                      variant="text"
+                      color="dark"
+                      style={{ padding: "10px" }}
+                    >
+                      <Icon>edit</Icon>&nbsp;Update
+                    </MDButton>
+                  )}
+
+                  <MDButton
+                    component={Link}
+                    to={`/pages/view-incident/${incident._id}`}
+                    size="small"
+                    variant="text"
+                    color="dark"
+                    style={{ padding: "10px" }}
+                  >
+                    <Icon>info</Icon>&nbsp;Detail
+                  </MDButton>
+                </MDBox>
+              ),
+            };
+          }),
+        });
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     getIncidentList();
   }, []);
@@ -139,7 +268,7 @@ function Incidents() {
                   <FormField
                     name="name"
                     placeholder="contoh: Bang ADNOH"
-                    // onChange={handleInputChange}
+                    onChange={handleInputChange}
                   />
                 </MDBox>
               </Grid>
@@ -159,7 +288,7 @@ function Incidents() {
                   name="nrp"
                   placeholder="ex: 124788"
                   type="number"
-                  // onChange={handleInputChange}
+                  onChange={handleInputChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
@@ -176,10 +305,10 @@ function Incidents() {
                     </MDTypography>
                   </MDBox>
                   <Autocomplete
-                    options={["Plant 1", "Plant 2", "Plant 3", "Plant 4"]}
-                    // onChange={(_, value) => {
-                    //   setSearchParam({ ...searchParam, plant: value });
-                    // }}
+                    options={listPlant}
+                    onChange={(_, value) => {
+                      setSearchParam({ ...searchParam, plant: value });
+                    }}
                     renderInput={(params) => <MDInput {...params} variant="standard" />}
                   />
                 </MDBox>
@@ -198,10 +327,10 @@ function Incidents() {
                     </MDTypography>
                   </MDBox>
                   <Autocomplete
-                    options={["Kehilangan", "Pencurian", "Kecelakaan", "Kebakaran", "Perkelahian"]}
-                    // onChange={(_, value) => {
-                    //   setSearchParam({ ...searchParam, plant: value });
-                    // }}
+                    options={ListCategory}
+                    onChange={(_, value) => {
+                      setSearchParam({ ...searchParam, category: value });
+                    }}
                     renderInput={(params) => <MDInput {...params} variant="standard" />}
                   />
                 </MDBox>
@@ -221,7 +350,7 @@ function Incidents() {
                     </MDTypography>
                   </MDBox>
                   <Autocomplete
-                    options={["Active", "Inactive"]}
+                    options={listStatus}
                     onChange={(_, value) => {
                       setSearchParam({ ...searchParam, status: value });
                     }}
@@ -229,18 +358,21 @@ function Incidents() {
                   />
                 </MDBox>
               </Grid>
-              <Grid item xs={12} sm={6} mt={2}>
+              {/* <Grid item xs={12} sm={6} mt={2}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DateTimePicker
-                    label="Waktu Kejadian"
-                    value={new Date(Date.now())}
-                    onChange={(newValue) => {
-                      setIncidentDetail({ ...incidentDetail, incidentDate: newValue.getTime() });
-                    }}
+                  <DatePicker
+                    label="Tanggal Laporan Kejadian"
+                    value={searchParam.incidentDate ? searchParam.incidentDate : new Date()}
+                    onChange={(newValue) =>
+                      setSearchParam({
+                        ...searchParam,
+                        incidentDate: newValue.getTime(),
+                      })
+                    }
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </LocalizationProvider>
-              </Grid>
+              </Grid> */}
             </Grid>
           </MDBox>
           <Grid container>

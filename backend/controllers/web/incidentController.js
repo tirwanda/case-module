@@ -83,6 +83,40 @@ exports.getIncidentById = catchAsyncErrors(async (req, res, next) => {
 	}
 });
 
+exports.serachIncidents = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const { name, nrp, plant, category, status } = req.body;
+
+		let filter = {};
+
+		if (name) {
+			filter.reporterName = { $regex: name, $options: 'i' }; // Pencarian menggunakan regex untuk nama pelapor
+		}
+		if (nrp) {
+			filter.reporterNRP = nrp;
+		}
+		if (plant) {
+			filter.plant = plant;
+		}
+		if (category) {
+			filter.category = category;
+		}
+		if (status) {
+			filter.status = status;
+		}
+
+		const incidents = await Incident.find(filter);
+
+		res.status(200).json({
+			success: true,
+			count: incidents.length,
+			incidents,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
+
 exports.updateIncident = catchAsyncErrors(async (req, res, next) => {
 	try {
 		const incident = await Incident.findById(req.params.id);
