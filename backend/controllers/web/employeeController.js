@@ -99,6 +99,50 @@ exports.getEmployeeById = catchAsyncErrors(async (req, res, next) => {
 	}
 });
 
+exports.searchEmployee = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const { plant, name, nrp, jabatan, phone, email, status, company } =
+			req.body;
+
+		let filter = {};
+
+		if (name) {
+			filter.reporterName = { $regex: name, $options: 'i' }; // Pencarian menggunakan regex untuk nama pelapor
+		}
+		if (nrp) {
+			filter.reporterNRP = nrp;
+		}
+		if (plant) {
+			filter.plant = plant;
+		}
+		if (status) {
+			filter.status = status;
+		}
+		if (company) {
+			filter.company = { $regex: company, $options: 'i' };
+		}
+		if (phone) {
+			filter.phone = phone;
+		}
+		if (email) {
+			filter.email = email;
+		}
+		if (jabatan) {
+			filter.jabatan = { $regex: jabatan, $options: 'i' };
+		}
+
+		const employes = await Employee.find(filter);
+
+		res.status(200).json({
+			success: true,
+			count: employes.length,
+			employes,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
+
 exports.updateEmployee = catchAsyncErrors(async (req, res, next) => {
 	try {
 		const checkEmployee = await Employee.findById(req.params.employeeId);

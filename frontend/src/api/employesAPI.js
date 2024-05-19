@@ -11,6 +11,14 @@ export const getEmployes = () =>
     },
   });
 
+export const searchEmployee = (data) =>
+  axios.post(`${HOST_URL}/api/v1/employee/search`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
 export const addEmployee = (data) =>
   axios.post(`${HOST_URL}/api/v1/create-employee`, data, {
     headers: {

@@ -26,7 +26,8 @@ import MDButton from "components/MDButton";
 import { addEmployee } from "api/employesAPI";
 import { deleteEmployee } from "api/employesAPI";
 import { updateEmployee } from "api/employesAPI";
-import { de } from "date-fns/locale";
+import { ca, de } from "date-fns/locale";
+import { searchEmployee } from "api/employesAPI";
 
 function Employes() {
   const [employes, setEmployes] = useState(dataTableData);
@@ -70,7 +71,7 @@ function Employes() {
     email: "",
     department: "",
     division: "",
-    status: "Active",
+    status: "",
     company: "",
   });
 
@@ -88,8 +89,50 @@ function Employes() {
     });
   };
 
-  const handleSeacrhForm = (data) => {
-    console.log(data);
+  const handleSeacrhForm = async (data) => {
+    const role = localStorage.getItem("ROLE");
+    try {
+      await searchEmployee(data).then((response) => {
+        setEmployes({
+          ...employes,
+          rows: response.data.employes.map((employee) => {
+            let canUpdate = false; // Initialize canUpdate variable
+            if (role === "ROLE_ADMIN" || role === "ROLE_DEPT_HEAD") {
+              canUpdate = true; // Update canUpdate based on conditions
+            }
+            return {
+              ...employee,
+              actions: canUpdate && (
+                <MDBox
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                  mt={{ xs: 2, sm: 0 }}
+                  mr={{ xs: -1.5, sm: 0 }}
+                >
+                  <MDButton
+                    variant="text"
+                    color="error"
+                    onClick={() => handleDelete(employee._id, employee.name)}
+                  >
+                    <Icon>delete</Icon>&nbsp;delete
+                  </MDButton>
+                  <MDButton
+                    variant="text"
+                    color="dark"
+                    onClick={() => handleUpdateEmployee(employee)}
+                  >
+                    <Icon>edit</Icon>&nbsp;Update
+                  </MDButton>
+                </MDBox>
+              ),
+            };
+          }),
+        });
+      });
+    } catch (error) {
+      console.error("error: ", error);
+    }
   };
 
   const handleAddEmployee = () => {
@@ -103,7 +146,7 @@ function Employes() {
       email: "",
       department: "",
       division: "",
-      status: "Active",
+      status: "",
       company: "",
     });
     setOpenAddEmployee(true);
@@ -131,14 +174,18 @@ function Employes() {
   const getEmployesData = () => {
     const role = localStorage.getItem("ROLE");
 
-    if (role === "ROLE_MANAGER" || role === "ROLE_ADMIN" || role === "ROLE_USER") {
-      getEmployes()
-        .then((res) => {
-          setEmployes({
-            ...employes,
-            rows: res.data.employes.map((employee) => ({
+    getEmployes()
+      .then((response) => {
+        setEmployes({
+          ...employes,
+          rows: response.data.employes.map((employee) => {
+            let canUpdate = false; // Initialize canUpdate variable
+            if (role === "ROLE_ADMIN" || role === "ROLE_DEPT_HEAD") {
+              canUpdate = true; // Update canUpdate based on conditions
+            }
+            return {
               ...employee,
-              actions: (
+              actions: canUpdate && (
                 <MDBox
                   display="flex"
                   justifyContent="space-between"
@@ -162,13 +209,13 @@ function Employes() {
                   </MDButton>
                 </MDBox>
               ),
-            })),
-          });
-        })
-        .catch((error) => {
-          console.log("error: ", error);
+            };
+          }),
         });
-    }
+      })
+      .catch((error) => {
+        console.error("error: ", error);
+      });
   };
 
   const handleSave = async (event) => {
@@ -448,7 +495,7 @@ function Employes() {
                   Employes
                 </MDTypography>
               </Grid>
-              {(role === "ROLE_USER" || role === "ROLE_ADMIN") && (
+              {(role === "ROLE_DEPT_HEAD" || role === "ROLE_ADMIN") && (
                 <MDBox ml="auto" mt={3} display="flex">
                   <MDBox mr={2}>
                     <MDButton

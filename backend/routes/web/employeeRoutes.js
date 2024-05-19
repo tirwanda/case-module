@@ -5,12 +5,15 @@ const {
 	getEmployeeById,
 	updateEmployee,
 	deleteEmployeeById,
+	searchEmployee,
 } = require('../../controllers/web/employeeController');
 
 const { isAuthenticatedUser } = require('../../middleware/auth');
 const router = express.Router();
 
 router.route('/create-employee').post(isAuthenticatedUser, createEmployee);
+
+router.route('/employee/search').post(isAuthenticatedUser, searchEmployee);
 
 router.route('/employes').get(isAuthenticatedUser, getAllEmployes);
 
