@@ -33,6 +33,7 @@ import { addPICArea } from "api/picAreaAPI";
 import { deletePICArea } from "api/picAreaAPI";
 import { updatePICArea } from "api/picAreaAPI";
 import { de } from "date-fns/locale";
+import { searchPICArea } from "api/picAreaAPI";
 
 function SecurityPICArea() {
   const [picAreas, setPICAreas] = useState(dataTableData);
@@ -51,10 +52,20 @@ function SecurityPICArea() {
     beginEffectiveDate: 0,
     endEffectiveDate: 0,
   });
+  const [listPlant, setListPlant] = useState([
+    "P1 Sunter",
+    "P2 Pegangsaan",
+    "Pulo Gadung",
+    "P3 Cikarang",
+    "P4 Karawang",
+    "P5 Karawang",
+    "P6 Deltamas",
+    "PQE",
+    "SRTC",
+  ]);
   const [startedDate, setstartedDate] = useState(new Date().getTime());
   const [completedDate, setCompletedDate] = useState(new Date().getTime());
 
-  const [listPlant, setListPlant] = useState(["P1 Sunter", "P2 Pegangsaan", "P3 Cikarang"]);
   const [searchParam, setSearchParam] = useState({
     plant: "",
     name: "",
@@ -71,8 +82,35 @@ function SecurityPICArea() {
     });
   };
 
-  const handleSeacrhForm = (data) => {
-    console.log(data);
+  const handleSeacrhForm = async (data) => {
+    await searchPICArea(data).then((res) => {
+      setPICAreas({
+        ...picAreas,
+        rows: res.data.picAreas.map((item) => ({
+          ...item.employee,
+          actions: (
+            <MDBox
+              display="flex"
+              justifyContent="space-between"
+              alignItems="flex-start"
+              mt={{ xs: 2, sm: 0 }}
+              mr={{ xs: -1.5, sm: 0 }}
+            >
+              <MDButton
+                variant="text"
+                color="error"
+                onClick={() => handleDeletePICArea(item._id, item.employee.name)}
+              >
+                <Icon>delete</Icon>&nbsp;delete
+              </MDButton>
+              <MDButton variant="text" color="dark" onClick={() => handleUpdatePICArea(item)}>
+                <Icon>edit</Icon>&nbsp;Update
+              </MDButton>
+            </MDBox>
+          ),
+        })),
+      });
+    });
   };
 
   const openSuccessSB = (data) => {

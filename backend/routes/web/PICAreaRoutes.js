@@ -6,12 +6,15 @@ const {
 	updatePICArea,
 	deletePICAreaById,
 	findEmployeesNotInPICArea,
+	searchPICArea,
 } = require('../../controllers/web/PICAreaController');
 
 const { isAuthenticatedUser } = require('../../middleware/auth');
 const router = express.Router();
 
 router.route('/create-pic-area').post(isAuthenticatedUser, createPICArea);
+
+router.route('/pic-area/search').post(isAuthenticatedUser, searchPICArea);
 
 router.route('/pic-areas').get(isAuthenticatedUser, getAllPICArea);
 

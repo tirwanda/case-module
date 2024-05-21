@@ -72,6 +72,55 @@ exports.getPICAreaById = catchAsyncErrors(async (req, res, next) => {
 	}
 });
 
+exports.searchPICArea = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const { plant, name, nrp, jabatan, phone, email } = req.body;
+
+		let filter = {};
+
+		let employeeFilter = {};
+		if (plant) {
+			employeeFilter.plant = plant;
+		}
+		if (name) {
+			employeeFilter.name = { $regex: name, $options: 'i' };
+		}
+		if (nrp) {
+			employeeFilter.nrp = nrp;
+		}
+		if (jabatan) {
+			employeeFilter.jabatan = { $regex: jabatan, $options: 'i' };
+		}
+		if (phone) {
+			employeeFilter.phone = phone;
+		}
+		if (email) {
+			employeeFilter.email = email;
+		}
+
+		const employees = await Employee.find(employeeFilter);
+		if (employees.length > 0) {
+			filter.employee = { $in: employees.map((emp) => emp._id) };
+		} else {
+			return res.status(200).json({
+				success: true,
+				count: 0,
+				message: 'No data found for the given search criteria',
+				picAreas: [],
+			});
+		}
+
+		const picAreas = await PICArea.find(filter).populate('employee');
+		res.status(200).json({
+			success: true,
+			count: picAreas.length,
+			picAreas,
+		});
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 401));
+	}
+});
+
 exports.findEmployeesNotInPICArea = catchAsyncErrors(async (req, res, next) => {
 	try {
 		// Ambil semua ID karyawan yang sudah terdaftar di PIC Area
@@ -89,47 +138,6 @@ exports.findEmployeesNotInPICArea = catchAsyncErrors(async (req, res, next) => {
 		});
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 401));
-	}
-});
-
-exports.searchPICArea = catchAsyncErrors(async (req, res, next) => {
-	try {
-		let query = {};
-
-		// Mendapatkan kriteria pencarian dari query string
-		const { employeeName, beginEffectiveDate, endEffectiveDate } = req.body;
-
-		// Memeriksa apakah kriteria pencarian diberikan, dan mengonfigurasi query sesuai dengan kriteria yang diberikan
-		if (employeeName) {
-			query['employee.name'] = { $regex: employeeName, $options: 'i' }; // Pencarian case-insensitive
-		}
-		if (beginEffectiveDate) {
-			query.beginEffectiveDate = beginEffectiveDate;
-		}
-		if (endEffectiveDate) {
-			query.endEffectiveDate = endEffectiveDate;
-		}
-
-		// Melakukan pencarian berdasarkan query yang telah dikonfigurasi
-		const picAreas = await PICArea.find(query).populate('employee');
-
-		// Memeriksa apakah hasil pencarian tidak ditemukan
-		if (!picAreas || picAreas.length === 0) {
-			return res.status(404).json({
-				success: false,
-				message: 'No PIC Areas found for the given criteria',
-			});
-		}
-
-		// Mengirimkan hasil pencarian
-		res.status(200).json({
-			success: true,
-			count: picAreas.length,
-			data: picAreas,
-		});
-	} catch (error) {
-		// Menangani kesalahan yang mungkin terjadi selama pencarian
-		return next(new ErrorHandler(error.message, 500));
 	}
 });
 

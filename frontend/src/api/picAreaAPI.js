@@ -29,6 +29,14 @@ export const getEmployesNotInPICArea = () => {
   });
 };
 
+export const searchPICArea = (data) =>
+  axios.post(`${HOST_URL}/api/v1/pic-area/search`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
 export const updatePICArea = (data) =>
   axios.put(`${HOST_URL}/api/v1/pic-area/${data._id}`, data, {
     headers: {
