@@ -34,7 +34,7 @@ function SigninMobile() {
   const [onSignIn, setOnSignIn] = useState(false);
 
   const initialState = {
-    email: "",
+    username: "",
     password: "",
   };
   const [data, setData] = useState(initialState);
@@ -56,8 +56,10 @@ function SigninMobile() {
       .then((response) => {
         if (response.status === 201) {
           localStorage.setItem("ACCESS_TOKEN", response.data.token);
-          localStorage.setItem("EMAIL", response.data.user.email);
+          localStorage.setItem("USERNAME", response.data.user.username);
           localStorage.setItem("ROLE", response.data.user.role);
+          localStorage.setItem("LOCATION", response.data.user.location);
+          localStorage.setItem("USER_ID", response.data.user._id);
         }
         setUser(dispatch, response.data.user);
         navigate("/pages/incident/create-incident");
@@ -70,7 +72,7 @@ function SigninMobile() {
               openErrorSB(err.response.data.error_message);
               break;
             case 401:
-              openErrorSB("Authentication Failed.Bad Credentials");
+              openErrorSB("Username or Password is incorrect");
               break;
             default:
               console.log("err: ", err);
@@ -126,17 +128,16 @@ function SigninMobile() {
             Sign in
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your email and password to sign in
+            Enter your username and password to sign in
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
               <MDInput
-                value={data.email}
-                name="email"
-                type="email"
-                label="Email"
+                value={data.username}
+                name="username"
+                label="Username"
                 onChange={handleInputChange}
                 fullWidth
               />
@@ -153,6 +154,7 @@ function SigninMobile() {
                 label="Password"
                 onChange={handleInputChange}
                 fullWidth
+                disabled={onSignIn}
               />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>

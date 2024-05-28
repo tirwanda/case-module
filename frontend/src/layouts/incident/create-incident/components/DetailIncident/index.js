@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // @material-ui core components
@@ -23,9 +23,14 @@ import MDEditor from "components/MDEditor";
 
 // API
 import { addIncident } from "api/incidentAPI";
+import MDSnackbar from "components/MDSnackbar";
 
 function DetailIncident() {
   const [isSubmited, setIsSubmited] = useState(false);
+  const [successSB, setSuccesSB] = useState(false);
+  const [errorSB, setErrorSB] = useState(false);
+  const [message, setMessage] = useState("");
+  const [saveCount, setSaveCount] = useState(0);
   const [reportSources, setReportSources] = useState([
     "Security Guard Tour",
     "Laporan User / Karyawan",
@@ -71,11 +76,23 @@ function DetailIncident() {
     plant: "",
     location: "",
     incidentDate: new Date().getTime(),
-    phone: 0,
-    reportSource: "Laporan User",
+    phone: "",
+    reportSource: "Laporan User / Karyawan",
   });
 
   const navigate = useNavigate();
+
+  const openSuccessSB = (data) => {
+    setSuccesSB(true);
+    setMessage(data);
+  };
+  const closeSuccessSB = () => setSuccesSB(false);
+
+  const openErrorSB = (data) => {
+    setErrorSB(true);
+    setMessage(data);
+  };
+  const closeErrorSB = () => setErrorSB(false);
 
   const handleInputChange = (e) => {
     setIncidentDetail({ ...incidentDetail, [e.target.name]: e.target.value });
@@ -84,10 +101,58 @@ function DetailIncident() {
   const handleSubmitForm = async () => {
     setIsSubmited(true);
     await addIncident(incidentDetail).then((response) => {
-      navigate("/pages/incident/list-incident");
+      // navigate("/pages/incident/list-incident");
+      setIncidentDetail({
+        reporterName: "",
+        reporterDivision: "",
+        reporterDepartment: "",
+        organizationUnit: "",
+        reporterNRP: "",
+        descriptions: "",
+        category: "",
+        plant: "",
+        location: "",
+        incidentDate: new Date().getTime(),
+        phone: "",
+        reportSource: "Laporan User / Karyawan",
+      });
+      openSuccessSB("Berhasil Menambahkan Laporan Kejadian");
+      setSaveCount(saveCount + 1);
       setIsSubmited(false);
     });
   };
+
+  const renderSuccessSB = (
+    <MDSnackbar
+      color="success"
+      icon="check"
+      title="Success"
+      content={message}
+      dateTime="A few seconds ago"
+      open={successSB}
+      onClose={closeSuccessSB}
+      close={closeSuccessSB}
+      bgWhite
+    />
+  );
+
+  useEffect(() => {
+    setIncidentDetail({
+      reporterName: "",
+      reporterDivision: "",
+      reporterDepartment: "",
+      organizationUnit: "",
+      reporterNRP: "",
+      descriptions: "",
+      category: "",
+      plant: "",
+      location: "",
+      incidentDate: new Date().getTime(),
+      phone: "",
+      reportSource: "Laporan User / Karyawan",
+    });
+    setIsSubmited(false);
+  }, [saveCount]);
 
   return (
     <Card id="basic-info" sx={{ overflow: "visible" }}>
@@ -99,6 +164,7 @@ function DetailIncident() {
           <Grid item xs={12} sm={6}>
             <FormField
               name="reporterName"
+              value={incidentDetail.reporterName}
               label="Nama Pelapor"
               placeholder="ex: Bang Adnoh"
               onChange={handleInputChange}
@@ -108,6 +174,7 @@ function DetailIncident() {
             <FormField
               name="reporterNRP"
               label="NRP Pelapor"
+              value={incidentDetail.reporterNRP}
               type="number"
               placeholder="ex: Bang Adnoh"
               onChange={handleInputChange}
@@ -131,6 +198,7 @@ function DetailIncident() {
                   setIncidentDetail({ ...incidentDetail, plant: value });
                 }}
                 options={listPlant}
+                value={incidentDetail.plant}
                 renderInput={(params) => <MDInput {...params} variant="standard" />}
               />
             </MDBox>
@@ -153,53 +221,28 @@ function DetailIncident() {
                   setIncidentDetail({ ...incidentDetail, category: value });
                 }}
                 options={ListCategory}
+                value={incidentDetail.category}
                 renderInput={(params) => <MDInput {...params} variant="standard" />}
               />
             </MDBox>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <MDBox mb={3}>
-              <MDBox display="inline-block">
-                <MDTypography
-                  component="label"
-                  variant="button"
-                  fontWeight="regular"
-                  color="text"
-                  textTransform="capitalize"
-                >
-                  Divisi Pelapor
-                </MDTypography>
-              </MDBox>
-              <Autocomplete
-                onChange={(event, value) => {
-                  setIncidentDetail({ ...incidentDetail, reporterDivision: value });
-                }}
-                options={["HR", "GA", "IT", "SI", "Engineering"]}
-                renderInput={(params) => <MDInput {...params} variant="standard" />}
-              />
-            </MDBox>
+            <FormField
+              name="reporterDivision"
+              label="Divisi Pelapor"
+              placeholder="ex: Bang Adnoh"
+              value={incidentDetail.reporterDivision}
+              onChange={handleInputChange}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <MDBox mb={3}>
-              <MDBox display="inline-block">
-                <MDTypography
-                  component="label"
-                  variant="button"
-                  fontWeight="regular"
-                  color="text"
-                  textTransform="capitalize"
-                >
-                  Departement Pelapor
-                </MDTypography>
-              </MDBox>
-              <Autocomplete
-                onChange={(event, value) => {
-                  setIncidentDetail({ ...incidentDetail, reporterDepartment: value });
-                }}
-                options={["Security", "Safety", "Engineering", "Production", "Quality Control"]}
-                renderInput={(params) => <MDInput {...params} variant="standard" />}
-              />
-            </MDBox>
+            <FormField
+              name="reporterDepartment"
+              label="Departement Pelapor"
+              placeholder="ex: Bang Adnoh"
+              value={incidentDetail.reporterDepartment}
+              onChange={handleInputChange}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <MDBox mb={3}>
@@ -219,6 +262,7 @@ function DetailIncident() {
                   setIncidentDetail({ ...incidentDetail, reportSource: value });
                 }}
                 options={reportSources}
+                value={incidentDetail.reportSource}
                 renderInput={(params) => <MDInput {...params} variant="standard" />}
               />
             </MDBox>
@@ -241,6 +285,7 @@ function DetailIncident() {
               name="organizationUnit"
               label="Seksi / Unit Kerja Pelapor"
               placeholder="ex: Security Operational Sunter"
+              value={incidentDetail.organizationUnit}
               onChange={handleInputChange}
             />
           </Grid>
@@ -249,6 +294,7 @@ function DetailIncident() {
               name="location"
               label="Detail Lokasi Kejadian"
               placeholder="ex: Gedung H lantai 2"
+              value={incidentDetail.location}
               onChange={handleInputChange}
             />
           </Grid>
@@ -257,6 +303,7 @@ function DetailIncident() {
               name="phone"
               type="number"
               label="No Telepon Pelapor"
+              value={incidentDetail.phone}
               placeholder="ex: 08572348923"
               onChange={handleInputChange}
             />
@@ -296,6 +343,7 @@ function DetailIncident() {
           </MDBox>
         </Grid>
       </MDBox>
+      {renderSuccessSB}
     </Card>
   );
 }

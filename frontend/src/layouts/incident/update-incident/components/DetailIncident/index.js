@@ -209,57 +209,22 @@ function DetailIncident() {
                 </MDBox>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <MDBox mb={3}>
-                  <MDBox display="inline-block">
-                    <MDTypography
-                      component="label"
-                      variant="button"
-                      fontWeight="regular"
-                      color="text"
-                      textTransform="capitalize"
-                    >
-                      Divisi Pelapor
-                    </MDTypography>
-                  </MDBox>
-                  <Autocomplete
-                    onChange={(event, value) => {
-                      setIncidentDetail({ ...incidentDetail, reporterDivision: value });
-                    }}
-                    value={incidentDetail.reporterDivision}
-                    options={["HR", "GA", "IT", "SI", "Engineering", "System Integration"]}
-                    renderInput={(params) => <MDInput {...params} variant="standard" />}
-                  />
-                </MDBox>
+                <FormField
+                  name="reporterDivision"
+                  label="Divisi Pelapor"
+                  placeholder="ex: Bang Adnoh"
+                  value={incidentDetail.reporterDivision}
+                  onChange={handleInputChange}
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <MDBox mb={3}>
-                  <MDBox display="inline-block">
-                    <MDTypography
-                      component="label"
-                      variant="button"
-                      fontWeight="regular"
-                      color="text"
-                      textTransform="capitalize"
-                    >
-                      Departement Pelapor
-                    </MDTypography>
-                  </MDBox>
-                  <Autocomplete
-                    onChange={(event, value) => {
-                      setIncidentDetail({ ...incidentDetail, reporterDepartment: value });
-                    }}
-                    value={incidentDetail.reporterDepartment}
-                    options={[
-                      "Security",
-                      "Safety",
-                      "Engineering",
-                      "Production",
-                      "Quality Control",
-                      "Business Process Integration",
-                    ]}
-                    renderInput={(params) => <MDInput {...params} variant="standard" />}
-                  />
-                </MDBox>
+                <FormField
+                  name="reporterDepartment"
+                  label="Departement Pelapor"
+                  placeholder="ex: Bang Adnoh"
+                  value={incidentDetail.reporterDepartment}
+                  onChange={handleInputChange}
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <MDBox mb={3}>
