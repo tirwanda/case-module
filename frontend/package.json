@@ -43,6 +43,7 @@
     "dompurify": "^3.1.0",
     "dotenv": "^16.4.1",
     "dropzone": "5.9.2",
+    "file-saver": "^2.0.5",
     "firebase": "^10.8.1",
     "flatpickr": "4.6.9",
     "formik": "2.2.9",
@@ -64,6 +65,7 @@
     "stylis-plugin-rtl": "2.0.2",
     "uuid": "^9.0.1",
     "web-vitals": "2.1.4",
+    "xlsx": "^0.18.5",
     "yup": "0.32.11"
   },
   "scripts": {

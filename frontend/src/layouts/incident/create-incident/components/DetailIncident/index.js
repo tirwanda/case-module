@@ -46,6 +46,7 @@ function DetailIncident() {
     "Ancaman / Paksaan",
     "Berbuat Onar",
     "Fraud",
+    "Kebakaran",
     "Sabotase",
     "Pencurian Barang Non-Pribadi",
     "Penyebaran Berita Palsu",

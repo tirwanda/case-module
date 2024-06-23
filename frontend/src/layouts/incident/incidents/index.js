@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Backdrop, Box, Fade, Icon, Modal } from "@mui/material";
+import { Icon } from "@mui/material";
 
 // Material Dashboard 2 PRO React components
 import MDBox from "components/MDBox";
@@ -15,11 +15,6 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import TextField from "@mui/material/TextField";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-
 // Data
 import dataTableData from "layouts/incident/incidents/data/dataTableData";
 import MDInput from "components/MDInput";
@@ -27,7 +22,8 @@ import FormField from "layouts/applications/wizard/components/FormField";
 import MDButton from "components/MDButton";
 import { getIncidents, searchOptionsIncident } from "api/incidentAPI";
 import { Link } from "react-router-dom";
-import { DatePicker } from "@mui/x-date-pickers";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
 
 function Incidents() {
   const [incidentList, setIncidentList] = useState(dataTableData);
@@ -38,6 +34,7 @@ function Incidents() {
     category: "",
     status: "",
   });
+  const [excelData, setExcelData] = useState("");
   const [listPlant, setListPlant] = useState([
     "P1 Sunter",
     "P2 Pegangsaan",
@@ -59,6 +56,8 @@ function Incidents() {
     "Ancaman / Paksaan",
     "Berbuat Onar",
     "Fraud",
+    "Kebakaran",
+    "Pelecehan / Harassment",
     "Sabotase",
     "Pencurian Barang Non-Pribadi",
     "Penyebaran Berita Palsu",
@@ -82,6 +81,9 @@ function Incidents() {
   const location = localStorage.getItem("LOCATION");
   const jakartaArea = ["P1 Sunter", "P2 Pegangsaan", "Pulo Gadung"];
   const jabarArea = ["P3 Cikarang", "P4 Karawang", "P5 Karawang", "P6 Deltamas", "PQE", "SRTC"];
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
 
   const handleInputChange = (e) => {
     setSearchParam({ ...searchParam, [e.target.name]: e.target.value });
@@ -89,6 +91,7 @@ function Incidents() {
 
   const getIncidentList = async () => {
     await getIncidents().then((response) => {
+      formatDataToExcel(response.data.incidents);
       setIncidentList({
         ...incidentList,
         rows: response.data.incidents.map((incident) => {
@@ -161,9 +164,40 @@ function Incidents() {
     });
   };
 
+  const exportToCSV = (apiData, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(apiData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
+
+  const removeHTMLTags = (text) => {
+    return text.replace(/<[^>]*>?/gm, "");
+  };
+
+  const formatDataToExcel = (data) => {
+    setExcelData(
+      data.map((incident) => ({
+        Taggal_Kejadian: new Date(incident.incidentDate).toLocaleDateString(),
+        Plant: incident.plant,
+        Lokasi: incident.location,
+        Category: incident.category,
+        Status: incident.status,
+        Department_Pelapor: incident.reporterDivision,
+        Sumber_Laporan: incident.reportSource,
+        Nama_Pelapor: incident.reporterName,
+        NRP_Pelapor: incident.reporterNRP,
+        Kronologi_Kejadian: `${removeHTMLTags(incident.chronology)}`,
+        Description: `${removeHTMLTags(incident.descriptions)}`,
+      }))
+    );
+  };
+
   const handleSeacrhForm = async (data) => {
     try {
       await searchOptionsIncident(data).then((response) => {
+        formatDataToExcel(response.data.incidents);
         setIncidentList({
           ...incidentList,
           rows: response.data.incidents.map((incident) => {
@@ -238,6 +272,7 @@ function Incidents() {
       console.error("Error:", error);
     }
   };
+
   useEffect(() => {
     getIncidentList();
   }, []);
@@ -358,21 +393,6 @@ function Incidents() {
                   />
                 </MDBox>
               </Grid>
-              {/* <Grid item xs={12} sm={6} mt={2}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Tanggal Laporan Kejadian"
-                    value={searchParam.incidentDate ? searchParam.incidentDate : new Date()}
-                    onChange={(newValue) =>
-                      setSearchParam({
-                        ...searchParam,
-                        incidentDate: newValue.getTime(),
-                      })
-                    }
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              </Grid> */}
             </Grid>
           </MDBox>
           <Grid container>
@@ -400,7 +420,12 @@ function Incidents() {
 
               <MDBox ml="auto" mt={3} display="flex">
                 <MDBox>
-                  <MDButton variant="gradient" color="dark" size="small">
+                  <MDButton
+                    variant="gradient"
+                    color="dark"
+                    size="small"
+                    onClick={() => exportToCSV(excelData, "List Incident")}
+                  >
                     Export to Excel
                   </MDButton>
                 </MDBox>
