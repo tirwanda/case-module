@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const ErrorHandler = require('./middleware/error');
+const functions = require('firebase-functions');
 
 app.use(express.json());
 app.use(cors());
@@ -47,3 +48,6 @@ app.use('/api/v1', analytics);
 app.use(ErrorHandler);
 
 module.exports = app;
+
+// Firebase Functions
+exports.server = functions.https.onRequest(app);
