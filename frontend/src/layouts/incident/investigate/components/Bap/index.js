@@ -108,39 +108,41 @@ function Bap() {
   const handleAddBap = async () => {
     setOnSave(true);
     const storageRef = ref(storage, `BAP/${fileName}.pdf`);
-    await uploadBytes(storageRef, dataFile).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then(async (downloadURL) => {
-        await addBap({
-          ...bapData,
-          attachment: downloadURL,
-          attachmentName: fileName,
-        }).then((response) => {
-          bapInit();
+    await uploadBytes(storageRef, dataFile)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref).then(async (downloadURL) => {
+          await addBap({
+            ...bapData,
+            attachment: downloadURL,
+            attachmentName: fileName,
+          }).then((response) => {
+            bapInit();
+          });
+        });
+      })
+      .then(() => {
+        setBapData({
+          type: "",
+          name: "",
+          nrp: "",
+          nik: "",
+          placeOfBirth: "",
+          dateOfBirth: "",
+          religion: "",
+          address: "",
+          vendorName: "",
+          picId: "",
+          checkerId: "",
+          interviewDate: "",
+          location: "",
+          purposes: "",
+          incidentId: incidentId,
+          status: "Created",
+          attachmentName: "",
+          attachment: "",
         });
       });
-    });
     handleCloseModal();
-
-    setBapData({
-      type: "",
-      name: "",
-      nrp: "",
-      nik: "",
-      placeOfBirth: "",
-      dateOfBirth: "",
-      religion: "",
-      address: "",
-      vendorName: "",
-      picId: "",
-      checkerId: "",
-      interviewDate: "",
-      location: "",
-      purposes: "",
-      incidentId: incidentId,
-      status: "Created",
-      attachmentName: "",
-      attachment: "",
-    });
   };
 
   const handleCloseModal = () => {
@@ -530,9 +532,7 @@ function Bap() {
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DateTimePicker
                         label="Tanggal Pemeriksaan"
-                        value={
-                          bapData.invitationDate ? new Date(bapData.invitationDate) : new Date()
-                        }
+                        value={bapData.interviewDate ? new Date(bapData.interviewDate) : new Date()}
                         onChange={(newValue) =>
                           setBapData({
                             ...bapData,
