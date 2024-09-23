@@ -206,3 +206,34 @@ exports.changePassword = catchAsyncErrors(async (req, res, next) => {
 		});
 	}
 });
+
+exports.changePasswordFromSetiaAhm = catchAsyncErrors(
+	async (req, res, next) => {
+		try {
+			const user = await User.findOne({ username: req.body.username });
+			const isPasswordMatched = await user.comparePassword(
+				req.body.oldPassword
+			);
+			if (!isPasswordMatched) {
+				return res.status(400).json({
+					success: false,
+					responseStatus: 400,
+					message: 'Your Old Password Is Incorrect',
+				});
+			} else {
+				user.password = req.body.newPassword;
+				await user.save();
+				res.status(201).json({
+					success: true,
+					message: 'Password Changed Successfully',
+					responseStatus: 201,
+				});
+			}
+		} catch (error) {
+			res.status(500).json({
+				success: false,
+				message: error.message,
+			});
+		}
+	}
+);
