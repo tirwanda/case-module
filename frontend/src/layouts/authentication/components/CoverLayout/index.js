@@ -18,19 +18,21 @@ import Footer from "layouts/authentication/components/Footer";
 // Case Module Security page layout routes
 import pageRoutes from "page.routes";
 
-function CoverLayout({ coverHeight, image, children }) {
+function CoverLayout({ coverHeight, image, children, navbar, footer }) {
   return (
     <PageLayout>
-      <DefaultNavbar
-        routes={pageRoutes}
-        action={{
-          type: "external",
-          route: "https://creative-tim.com/product/material-dashboard-pro-react",
-          label: "buy now",
-        }}
-        transparent
-        light
-      />
+      {navbar && (
+        <DefaultNavbar
+          routes={pageRoutes}
+          action={{
+            type: "external",
+            route: "https://creative-tim.com/product/material-dashboard-pro-react",
+            label: "buy now",
+          }}
+          transparent
+          light
+        />
+      )}
       <MDBox
         width="calc(100% - 2rem)"
         minHeight={coverHeight}
@@ -53,12 +55,12 @@ function CoverLayout({ coverHeight, image, children }) {
       />
       <MDBox mt={{ xs: -20, lg: -18 }} px={1} width="calc(100% - 2rem)" mx="auto">
         <Grid container spacing={1} justifyContent="center">
-          <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
+          <Grid item xl={11}>
             {children}
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
+      {footer && <Footer />}
     </PageLayout>
   );
 }
@@ -66,6 +68,8 @@ function CoverLayout({ coverHeight, image, children }) {
 // Setting default props for the CoverLayout
 CoverLayout.defaultProps = {
   coverHeight: "35vh",
+  navbar: true,
+  footer: true,
 };
 
 // Typechecking props for the CoverLayout
@@ -73,6 +77,8 @@ CoverLayout.propTypes = {
   coverHeight: PropTypes.string,
   image: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
+  navbar: PropTypes.bool,
+  footer: PropTypes.bool,
 };
 
 export default CoverLayout;

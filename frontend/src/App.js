@@ -39,6 +39,7 @@ import ViewIncident from "layouts/incident/view-incident";
 import Investigate from "layouts/incident/investigate";
 import Analytics from "layouts/dashboards/analytics";
 import SigninMobile from "layouts/authentication/sign-in/mobile";
+import OvernightPakring from "layouts/parking/overnight-parking";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -184,6 +185,10 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         {localStorage.getItem("ACCESS_TOKEN") && getRoutes(customRoutes)}
+        <Route
+          path="/overnight-parking"
+          element={<OvernightPakring color={darkMode ? "dark" : "white"} shadow={darkMode} />}
+        />
         <Route path="/sign-in" element={<SignInBasic />} />
         <Route path="/m/sign-in" element={<SigninMobile />} />
         <Route path="/registration" element={<RegisterStepper />} />
